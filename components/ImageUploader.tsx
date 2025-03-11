@@ -7,8 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-// Placeholder for gallery images (will be replaced with real images later)
-const PLACEHOLDER_IMAGES = Array(8).fill(null);
+// Sample gallery images
+const GALLERY_IMAGES = [
+  "/images/sample-1.jpg",
+  "/images/sample-2.jpg",
+  "/images/sample-3.jpg",
+  "/images/sample-4.jpg",
+  "/images/sample-5.jpg",
+  "/images/sample-6.jpg",
+];
 
 type ImageUploaderProps = {
   onImageSelected: (imageUrl: string) => void;
@@ -51,9 +58,10 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
     });
   };
 
-  const handlePlaceholderClick = () => {
-    toast.info("Sample images coming soon", {
-      description: "Please upload your own image for now.",
+  const handleGalleryImageClick = (imageUrl: string) => {
+    setSelectedImage(imageUrl);
+    toast.success("Image selected", {
+      description: "Gallery image selected successfully",
     });
   };
 
@@ -74,7 +82,7 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
       <div className="text-center">
         <h2 className="text-2xl font-bold mb-2">Create Your Puzzle</h2>
         <p className="text-gray-600 dark:text-gray-300">
-          Upload an image to start playing
+          Upload an image or choose from our gallery to start playing
         </p>
       </div>
 
@@ -135,36 +143,25 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
           </div>
         </TabsContent>
         <TabsContent value="gallery" className="py-6">
-          <div className="space-y-4">
-            <p className="text-center text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 p-3 rounded-md">
-              Sample images coming soon! Please upload your own image for now.
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              {PLACEHOLDER_IMAGES.map((_, index) => (
-                <div
-                  key={index}
-                  className="aspect-square bg-gray-200 dark:bg-gray-700 rounded-md cursor-pointer hover:opacity-80 transition-opacity overflow-hidden relative"
-                  onClick={handlePlaceholderClick}
-                >
-                  <div className="absolute inset-0 flex items-center justify-center text-gray-400">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      className="w-12 h-12"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                      />
-                    </svg>
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            {GALLERY_IMAGES.map((image, index) => (
+              <div
+                key={index}
+                className={`aspect-square rounded-md cursor-pointer hover:opacity-90 transition-opacity overflow-hidden relative ${
+                  selectedImage === image
+                    ? "ring-2 ring-primary ring-offset-2"
+                    : ""
+                }`}
+                onClick={() => handleGalleryImageClick(image)}
+              >
+                <Image
+                  src={image}
+                  alt={`Sample image ${index + 1}`}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            ))}
           </div>
         </TabsContent>
       </Tabs>
