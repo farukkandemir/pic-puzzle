@@ -34,18 +34,16 @@ const PuzzleTile = ({
     );
   }
 
-  // Get the original position of this tile based on its ID
+  // Calculate tile position based on its ID
   // This ensures each tile shows the correct part of the image
   const correctRow = Math.floor((tile.id - 1) / gridSize);
   const correctCol = (tile.id - 1) % gridSize;
 
-  // For a 3x3 grid with 100% image size, each tile shows 33.33% of the image
-  // Calculate the percentage of the image each tile should show
-  const bgSize = gridSize * 100; // 300% for 3x3
-
-  // Calculate how much to shift the background image for this tile
-  // We need to calculate exactly how much to shift the background image
-  // to show the correct part of the image for this tile
+  // For a perfectly square cropped image:
+  // - Each tile should display exactly 1/gridSize of the image width and height
+  // - We use 100% * gridSize as the background size (300% for a 3x3 grid)
+  // - We position the background image to show the correct portion for this tile
+  const bgSize = gridSize * 100; // e.g., 300% for a 3x3 grid
   const bgPosX = -(correctCol * 100);
   const bgPosY = -(correctRow * 100);
 

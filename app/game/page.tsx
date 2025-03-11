@@ -12,6 +12,49 @@ import { GameState, PuzzleGrid, GameStats } from "@/lib/types";
 import { createPuzzleGrid, shufflePuzzle } from "@/lib/utils";
 import { toast } from "sonner";
 
+// Function to crop an image to a square
+const cropImageToSquare = (imageUrl: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+
+    img.onload = () => {
+      // Create canvas for cropping
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      if (!ctx) {
+        reject(new Error("Failed to get canvas context"));
+        return;
+      }
+
+      // Calculate the square dimensions (use the smaller dimension)
+      const size = Math.min(img.width, img.height);
+
+      // Set canvas size to the square dimensions
+      canvas.width = size;
+      canvas.height = size;
+
+      // Calculate centering offset
+      const offsetX = (img.width - size) / 2;
+      const offsetY = (img.height - size) / 2;
+
+      // Draw the centered square portion of the image on the canvas
+      ctx.drawImage(img, offsetX, offsetY, size, size, 0, 0, size, size);
+
+      // Convert to data URL and resolve
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
+      resolve(dataUrl);
+    };
+
+    img.onerror = () => {
+      reject(new Error("Error loading image"));
+    };
+
+    img.src = imageUrl;
+  });
+};
+
 export default function GamePage() {
   const [gameState, setGameState] = useState<GameState>("setup");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -25,14 +68,15 @@ export default function GamePage() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Create a new puzzle when an image is selected
-  const handleImageSelected = (imageUrl: string) => {
+  const handleImageSelected = async (imageUrl: string) => {
     setSelectedImage(imageUrl);
     setIsLoading(true);
     setGameState("loading");
 
-    // Preload the image to get its dimensions
-    const img = new Image();
-    img.onload = () => {
+    try {
+      // Crop the image to a square
+      const croppedImageUrl = await cropImageToSquare(imageUrl);
+
       // Create a 3x3 grid
       const grid = createPuzzleGrid(3, 3);
       setOriginalGrid(JSON.parse(JSON.stringify(grid)));
@@ -41,6 +85,9 @@ export default function GamePage() {
       const shuffledGrid = shufflePuzzle(grid, 50);
       setPuzzleGrid(shuffledGrid);
 
+      // Set the selected image to the cropped version
+      setSelectedImage(croppedImageUrl);
+
       // Start the game
       setGameStats({
         moves: 0,
@@ -48,14 +95,12 @@ export default function GamePage() {
       });
       setIsLoading(false);
       setGameState("playing");
-    };
-    img.onerror = () => {
+    } catch (error) {
       setSelectedImage(null);
       setIsLoading(false);
       setGameState("setup");
-      toast.error("Failed to load image. Please try another image.");
-    };
-    img.src = imageUrl;
+      toast.error("Failed to process image. Please try another image.");
+    }
   };
 
   // Handle grid changes (tile moves)

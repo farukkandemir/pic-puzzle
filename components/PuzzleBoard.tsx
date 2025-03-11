@@ -5,6 +5,7 @@ import { PuzzleGrid, Position, GameStats } from "@/lib/types";
 import { canMoveTile, moveTile, isPuzzleSolved, formatTime } from "@/lib/utils";
 import PuzzleTile from "./PuzzleTile";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 type PuzzleBoardProps = {
   grid: PuzzleGrid;
@@ -82,10 +83,20 @@ const PuzzleBoard = ({
 
   return (
     <div className="flex flex-col items-center gap-6">
-      <div className="flex justify-between w-full px-4">
+      <div className="flex justify-between items-center w-full px-4">
         <div className="text-sm font-medium">
           Moves: <span className="font-bold">{gameStats.moves}</span>
         </div>
+
+        {/* Image Preview */}
+        <div className="border rounded-md shadow-sm w-16 h-16 overflow-hidden flex-shrink-0">
+          <img
+            src={imageUrl}
+            alt="Puzzle Target"
+            className="object-cover w-full h-full"
+          />
+        </div>
+
         <div className="text-sm font-medium">
           Time: <span className="font-bold">{formatTime(elapsedTime)}</span>
         </div>
