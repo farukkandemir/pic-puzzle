@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, ChangeEvent } from "react";
+import { useState, useRef, ChangeEvent, useCallback } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -24,12 +24,84 @@ type ImageUploaderProps = {
 const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  // Pre-optimize image before displaying
+  const optimizeImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new window.Image();
+        img.onload = () => {
+          // Resize images that are too large (keeping aspect ratio)
+          const MAX_WIDTH = 1200;
+          const MAX_HEIGHT = 1200;
 
+          let width = img.width;
+          let height = img.height;
+
+          if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+            const ratio = Math.min(MAX_WIDTH / width, MAX_HEIGHT / height);
+            width = width * ratio;
+            height = height * ratio;
+          }
+
+          // Create canvas and resize image
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext("2d");
+          if (!ctx) {
+            reject(new Error("Could not get canvas context"));
+            return;
+          }
+
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Determine quality based on original file size
+          let quality = 0.9;
+          if (file.size > 3 * 1024 * 1024) quality = 0.7;
+          else if (file.size > 1 * 1024 * 1024) quality = 0.8;
+
+          resolve(canvas.toDataURL("image/jpeg", quality));
+        };
+
+        img.onerror = () => reject(new Error("Failed to load image"));
+
+        if (event.target?.result) {
+          img.src = event.target.result as string;
+        } else {
+          reject(new Error("Failed to read file"));
+        }
+      };
+
+      reader.onerror = () => reject(new Error("Failed to read file"));
+      reader.readAsDataURL(file);
+    });
+  };
+
+  // Handle drag and drop
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const file = e.dataTransfer.files[0];
+
+      // Process the dropped file directly
+      handleFile(file);
+    }
+  }, []);
+
+  // Centralized file handling function
+  const handleFile = async (file: File) => {
     // Check file type
     if (!file.type.startsWith("image/")) {
       toast.error("Invalid file type", {
@@ -38,28 +110,43 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
       return;
     }
 
-    // Check file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
+    // Check file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
       toast.error("File too large", {
-        description: "Please upload an image smaller than 5MB",
+        description: "Please upload an image smaller than 10MB",
       });
       return;
     }
 
     setIsUploading(true);
+    setImageLoaded(false);
 
-    // Create a URL for the image
-    const imageUrl = URL.createObjectURL(file);
-    setSelectedImage(imageUrl);
-    setIsUploading(false);
+    try {
+      // Optimize the image before displaying
+      const optimizedImageUrl = await optimizeImage(file);
+      setSelectedImage(optimizedImageUrl);
+      toast.success("Image uploaded", {
+        description: "Your image has been uploaded and optimized successfully",
+      });
+    } catch (error) {
+      toast.error("Failed to process image", {
+        description: "Please try another image or a different format",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
-    toast.success("Image uploaded", {
-      description: "Your image has been uploaded successfully",
-    });
+  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      handleFile(file);
+    }
   };
 
   const handleGalleryImageClick = (imageUrl: string) => {
     setSelectedImage(imageUrl);
+    setImageLoaded(true);
     toast.success("Image selected", {
       description: "Gallery image selected successfully",
     });
@@ -75,6 +162,10 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
     if (selectedImage) {
       onImageSelected(selectedImage);
     }
+  };
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
   };
 
   return (
@@ -95,6 +186,8 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
           <div
             className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-12 text-center cursor-pointer hover:border-primary/50 transition-colors"
             onClick={handleSelectButtonClick}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
           >
             <input
               type="file"
@@ -108,11 +201,19 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
             {selectedImage ? (
               <div className="space-y-4">
                 <div className="relative w-64 h-64 mx-auto overflow-hidden rounded-md">
+                  {!imageLoaded && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+                      <div className="w-full h-full animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md" />
+                    </div>
+                  )}
                   <Image
                     src={selectedImage}
                     alt="Selected image"
                     fill
-                    className="object-cover"
+                    className={`object-cover transition-opacity duration-300 ${
+                      imageLoaded ? "opacity-100" : "opacity-0"
+                    }`}
+                    onLoad={handleImageLoad}
                   />
                 </div>
                 <p className="text-sm text-gray-500">Click to change image</p>
@@ -159,6 +260,7 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
                   alt={`Sample image ${index + 1}`}
                   fill
                   className="object-cover"
+                  priority={index < 3} // Prioritize loading the first 3 images
                 />
               </div>
             ))}
@@ -169,11 +271,18 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
       <div className="flex justify-center">
         <Button
           size="lg"
-          disabled={!selectedImage}
+          disabled={!selectedImage || isUploading}
           className="px-8"
           onClick={handleCreatePuzzle}
         >
-          Create Puzzle
+          {isUploading ? (
+            <>
+              <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></span>
+              Processing...
+            </>
+          ) : (
+            "Create Puzzle"
+          )}
         </Button>
       </div>
     </div>
