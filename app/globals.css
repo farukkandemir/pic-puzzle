@@ -46,62 +46,63 @@
 }
 
 :root {
-  /* Base colors */
-  --background: #ffffff;
-  --foreground: #0f172a;
+  /* Dark Theme Colors As Default */
+  /* Base colors - Deep Rich Navy */
+  --background: #121826;
+  --foreground: #f8fafc;
 
-  /* Card colors */
-  --card: #ffffff;
-  --card-foreground: #0f172a;
+  /* Card colors - Slightly lighter navy */
+  --card: #1e293b;
+  --card-foreground: #f8fafc;
 
   /* Popover colors */
-  --popover: #ffffff;
-  --popover-foreground: #0f172a;
+  --popover: #1e293b;
+  --popover-foreground: #f8fafc;
 
-  /* Primary colors - Electric Blue */
-  --primary: #0284c7;
-  --primary-foreground: #ffffff;
+  /* Primary colors - Vibrant Cyan */
+  --primary: #00b4d8;
+  --primary-foreground: #0f172a;
 
-  /* Secondary colors - Soft Lavender */
-  --secondary: #e9d5ff;
-  --secondary-foreground: #6b21a8;
+  /* Secondary colors - Muted Teal */
+  --secondary: #4c9071;
+  --secondary-foreground: #f8fafc;
 
   /* Muted colors */
-  --muted: #f8fafc;
-  --muted-foreground: #64748b;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
 
-  /* Accent colors - Mint Green */
-  --accent: #d1fae5;
-  --accent-foreground: #065f46;
+  /* Accent colors - Vibrant Magenta */
+  --accent: #ff577f;
+  --accent-foreground: #f8fafc;
 
   /* Destructive colors */
-  --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
+  --destructive: #ff5757;
+  --destructive-foreground: #f8fafc;
 
   /* Border colors */
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #94a3b8;
+  --border: #334155;
+  --input: #334155;
+  --ring: #475569;
 
-  /* Chart colors - Vibrant palette */
-  --chart-1: #0284c7; /* Electric Blue */
-  --chart-2: #f97316; /* Warm Orange */
-  --chart-3: #8b5cf6; /* Bright Purple */
-  --chart-4: #10b981; /* Emerald Green */
-  --chart-5: #f43f5e; /* Rose */
+  /* Chart colors - Sleek Vibrant palette */
+  --chart-1: #00b4d8; /* Cyan */
+  --chart-2: #ff9f45; /* Pastel Orange */
+  --chart-3: #8a2be2; /* Electric Purple */
+  --chart-4: #4c9071; /* Muted Teal */
+  --chart-5: #ff577f; /* Warm Magenta */
 
   /* Radius */
   --radius: 0.625rem;
 
   /* Sidebar */
-  --sidebar: #f8fafc;
-  --sidebar-foreground: #0f172a;
-  --sidebar-primary: #0284c7;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e9d5ff;
-  --sidebar-accent-foreground: #6b21a8;
-  --sidebar-border: #e2e8f0;
-  --sidebar-ring: #94a3b8;
+  --sidebar: #0f172a;
+  --sidebar-foreground: #f8fafc;
+  --sidebar-primary: #00b4d8;
+  --sidebar-primary-foreground: #f8fafc;
+  --sidebar-accent: #ff577f;
+  --sidebar-accent-foreground: #f8fafc;
+  --sidebar-border: #334155;
+  --sidebar-ring: #475569;
 }
 
 .dark {

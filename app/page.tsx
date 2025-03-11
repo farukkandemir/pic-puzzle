@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -13,19 +15,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-b from-background to-background/95 dark:from-background dark:to-background/90">
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-background/95 via-primary/5 to-background/95">
       {/* Header */}
-      <header className="w-full py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center backdrop-blur-sm bg-background/90 dark:bg-background/90 sticky top-0 z-10 border-b border-border">
+      <header className="w-full py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center backdrop-blur-sm bg-background/80 sticky top-0 z-10 border-b border-border">
         <div className="flex items-center gap-3">
-          <div className="relative w-10 h-10 bg-neutral-900 dark:bg-white rounded-lg overflow-hidden shadow-md">
+          <div className="relative w-10 h-10 bg-background/90 rounded-lg overflow-hidden shadow-md border border-border">
             <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-0.5">
-              <div className="bg-primary/90"></div>
-              <div className="bg-accent/90"></div>
-              <div className="bg-secondary/90"></div>
-              <div className="bg-chart-2/90"></div>
+              <div className="bg-primary/90 hover:bg-primary transition-colors duration-300"></div>
+              <div className="bg-accent/90 hover:bg-accent transition-colors duration-300"></div>
+              <div className="bg-secondary/90 hover:bg-secondary transition-colors duration-300"></div>
+              <div className="bg-chart-2/90 hover:bg-chart-2 transition-colors duration-300"></div>
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-foreground">PicPuzzle</h1>
+          <h1 className="text-2xl font-bold text-foreground">
+            <span className="text-primary">Pic</span>Puzzle
+          </h1>
         </div>
         <nav className="hidden md:flex gap-8">
           <a
@@ -50,11 +54,11 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center relative overflow-hidden">
+      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center relative overflow-hidden bg-gradient-to-b from-transparent via-primary/5 to-transparent">
         <div className="absolute inset-0 -z-10 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-primary/10 blur-3xl dark:bg-primary/20"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-secondary/10 blur-3xl dark:bg-secondary/20"></div>
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-accent/10 blur-2xl dark:bg-accent/20"></div>
+          <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-primary/15 blur-3xl"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-accent/15 blur-3xl"></div>
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-secondary/15 blur-2xl"></div>
         </div>
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground mb-6">
           Turn Images into <span className="text-primary">Fun Puzzles</span>
@@ -67,7 +71,7 @@ export default function Home() {
           <Link href="/game">
             <Button
               size="lg"
-              className="text-base px-8 py-6 shadow-md hover:shadow-lg transition-all duration-200 bg-primary text-primary-foreground hover:bg-primary/90"
+              className="text-base px-8 py-6 shadow-md hover:shadow-lg transition-all duration-200 bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.03] active:scale-[0.97]"
             >
               Start Playing
             </Button>
@@ -75,7 +79,7 @@ export default function Home() {
           <Button
             variant="outline"
             size="lg"
-            className="text-base px-8 py-6 border-border hover:bg-muted transition-all duration-200"
+            className="text-base px-8 py-6 border-border hover:bg-muted/50 transition-all duration-200 hover:scale-[1.03] active:scale-[0.97]"
             asChild
           >
             <a href="#puzzle-types">Explore Puzzle Types</a>
@@ -84,13 +88,14 @@ export default function Home() {
 
         {/* Preview Image */}
         <div className="mt-20 max-w-3xl mx-auto relative">
-          <div className="bg-card dark:bg-card rounded-xl shadow-lg overflow-hidden p-5 border border-border">
+          <div className="bg-card/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden p-5 border border-border relative group">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
             <div className="aspect-[4/3] relative">
               <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-1.5">
                 {Array.from({ length: 9 }).map((_, i) => (
                   <div
                     key={i}
-                    className={`bg-muted dark:bg-muted rounded-md ${
+                    className={`bg-muted/80 rounded-md ${
                       i === 8 ? "opacity-0" : ""
                     }`}
                   />
@@ -99,7 +104,7 @@ export default function Home() {
             </div>
           </div>
           <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-primary/20 rounded-full blur-2xl"></div>
-          <div className="absolute -top-6 -left-6 w-32 h-32 bg-secondary/20 rounded-full blur-2xl"></div>
+          <div className="absolute -top-6 -left-6 w-32 h-32 bg-accent/20 rounded-full blur-2xl"></div>
         </div>
       </main>
 

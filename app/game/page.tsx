@@ -85,7 +85,7 @@ export default function GamePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800 p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <header className="w-full max-w-7xl mx-auto flex justify-between items-center mb-8">
         <Link href="/" className="flex items-center gap-2">
