@@ -1,4 +1,4 @@
-export type GameState = "setup" | "playing" | "completed";
+export type GameState = "setup" | "playing" | "completed" | "loading";
 
 export type Position = {
   row: number;

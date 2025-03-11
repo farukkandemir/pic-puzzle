@@ -38,15 +38,20 @@ const PuzzleTile = ({
   const row = Math.floor((tile.id - 1) / gridSize);
   const col = (tile.id - 1) % gridSize;
 
-  const backgroundPositionX = -(col * 100) / (gridSize - 1);
-  const backgroundPositionY = -(row * 100) / (gridSize - 1);
+  // The correct formula for background position
+  // We need to calculate what percentage of the image each tile should show
+  const bgSize = gridSize * 100; // e.g., 300% for a 3x3 grid
+  const bgPosX = -(col * 100);
+  const bgPosY = -(row * 100);
 
   const handleClick = () => {
-    onTileClick(tile.position);
+    if (isMovable) {
+      onTileClick(tile.position);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" || e.key === " ") {
+    if ((e.key === "Enter" || e.key === " ") && isMovable) {
       onTileClick(tile.position);
     }
   };
@@ -66,8 +71,9 @@ const PuzzleTile = ({
         width: tileSize,
         height: tileSize,
         backgroundImage: `url(${imageUrl})`,
-        backgroundSize: `${gridSize * 100}%`,
-        backgroundPosition: `${backgroundPositionX}% ${backgroundPositionY}%`,
+        backgroundSize: `${bgSize}%`,
+        backgroundPosition: `${bgPosX}% ${bgPosY}%`,
+        backgroundRepeat: "no-repeat",
       }}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
@@ -82,8 +88,8 @@ const PuzzleTile = ({
       aria-label={`Puzzle tile ${tile.id}`}
       role="button"
     >
-      {/* Optional: Show tile number for debugging or as an option */}
-      {/* <div className="absolute inset-0 flex items-center justify-center text-white text-2xl font-bold bg-black/30">
+      {/* Uncomment this to debug tile IDs */}
+      {/* <div className="absolute inset-0 flex items-center justify-center bg-black/30 text-white text-xs">
         {tile.id}
       </div> */}
     </div>

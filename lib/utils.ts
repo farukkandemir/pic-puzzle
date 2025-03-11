@@ -73,10 +73,17 @@ export const moveTile = (grid: PuzzleGrid, position: Position): PuzzleGrid => {
   const newGrid = JSON.parse(JSON.stringify(grid)) as PuzzleGrid;
   const emptyPos = findEmptyTile(newGrid);
 
-  // Swap the tile with the empty space
-  const temp = newGrid[position.row][position.col];
-  newGrid[position.row][position.col] = newGrid[emptyPos.row][emptyPos.col];
-  newGrid[emptyPos.row][emptyPos.col] = temp;
+  // Get the tiles to swap
+  const clickedTile = newGrid[position.row][position.col];
+  const emptyTile = newGrid[emptyPos.row][emptyPos.col];
+
+  // Update their position properties
+  clickedTile.position = { ...emptyPos };
+  emptyTile.position = { ...position };
+
+  // Swap the tiles in the grid
+  newGrid[emptyPos.row][emptyPos.col] = clickedTile;
+  newGrid[position.row][position.col] = emptyTile;
 
   return newGrid;
 };

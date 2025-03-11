@@ -27,7 +27,30 @@ const PuzzleBoard = ({
 
   // Calculate tile size based on the grid dimensions and board size
   const gridSize = grid.length;
-  const tileSize = boardSize / gridSize;
+  const gapSize = 2; // Gap between tiles
+  const tileSize = Math.floor(
+    (boardSize - gapSize * (gridSize + 1)) / gridSize
+  );
+
+  // Handle tile clicks
+  const handleTileClick = (position: Position) => {
+    // Check if the tile can be moved
+    if (!canMoveTile(grid, position)) {
+      return;
+    }
+
+    // Move the tile
+    const newGrid = moveTile(grid, position);
+    onGridChange(newGrid);
+
+    // Check if the puzzle is solved
+    if (isPuzzleSolved(newGrid)) {
+      onPuzzleSolved({
+        ...gameStats,
+        endTime: Date.now(),
+      });
+    }
+  };
 
   // Set up a timer to track elapsed time
   useEffect(() => {
@@ -46,8 +69,8 @@ const PuzzleBoard = ({
     const handleResize = () => {
       if (boardRef.current) {
         const parentWidth = boardRef.current.parentElement?.clientWidth || 300;
-        const newSize = Math.min(parentWidth - 32, 500); // Max size of 500px, with some padding
-        setBoardSize(newSize);
+        const size = Math.min(parentWidth - 32, 500); // Max size of 500px, with some padding
+        setBoardSize(size);
       }
     };
 
@@ -56,34 +79,6 @@ const PuzzleBoard = ({
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  const handleTileClick = (position: Position) => {
-    if (canMoveTile(grid, position)) {
-      const newGrid = moveTile(grid, position);
-      onGridChange(newGrid);
-
-      // Check if the puzzle is solved
-      if (isPuzzleSolved(newGrid)) {
-        const endTime = Date.now();
-        const stats = {
-          ...gameStats,
-          endTime,
-        };
-        onPuzzleSolved(stats);
-
-        toast.success("Puzzle Solved!", {
-          description: `You completed the puzzle in ${formatTime(
-            Math.floor((endTime - gameStats.startTime) / 1000)
-          )} with ${gameStats.moves} moves.`,
-        });
-      }
-    } else {
-      // Optional: provide feedback that the tile can't be moved
-      toast.error("Can't move this tile", {
-        description: "This tile is not adjacent to the empty space.",
-      });
-    }
-  };
 
   return (
     <div className="flex flex-col items-center gap-6">
@@ -98,27 +93,35 @@ const PuzzleBoard = ({
 
       <div
         ref={boardRef}
-        className="relative bg-gray-200 dark:bg-gray-700 rounded-lg p-4 shadow-inner"
-        style={{ width: boardSize, height: boardSize }}
+        className="relative bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden shadow-inner"
+        style={{
+          width: boardSize,
+          height: boardSize,
+          padding: `${gapSize}px`,
+        }}
       >
         <div
-          className="grid gap-1"
+          className="grid w-full h-full"
           style={{
             gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
             gridTemplateRows: `repeat(${gridSize}, 1fr)`,
+            gap: `${gapSize}px`,
           }}
         >
-          {grid.flat().map((tile) => (
-            <PuzzleTile
-              key={tile.id}
-              tile={tile}
-              imageUrl={imageUrl}
-              tileSize={tileSize - 4} // Subtract gap size
-              gridSize={gridSize}
-              isMovable={canMoveTile(grid, tile.position)}
-              onTileClick={handleTileClick}
-            />
-          ))}
+          {grid.flat().map((tile) => {
+            const isMovable = canMoveTile(grid, tile.position);
+            return (
+              <PuzzleTile
+                key={tile.id}
+                tile={tile}
+                imageUrl={imageUrl}
+                tileSize={tileSize}
+                gridSize={gridSize}
+                isMovable={isMovable}
+                onTileClick={handleTileClick}
+              />
+            );
+          })}
         </div>
       </div>
     </div>
