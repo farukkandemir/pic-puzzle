@@ -3,14 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Home() {
@@ -53,13 +46,8 @@ export default function Home() {
         </nav>
       </header>
 
-      {/* Hero Section */}
-      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center relative overflow-hidden bg-gradient-to-b from-transparent via-primary/5 to-transparent">
-        <div className="absolute inset-0 -z-10 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-primary/15 blur-3xl"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-accent/15 blur-3xl"></div>
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-secondary/15 blur-2xl"></div>
-        </div>
+      {/* Main/Hero Section */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center relative overflow-hidden bg-gradient-to-b from-background via-primary/5 to-background">
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground mb-6">
           Turn Images into <span className="text-primary">Fun Puzzles</span>
         </h1>
@@ -85,33 +73,12 @@ export default function Home() {
             <a href="#puzzle-types">Explore Puzzle Types</a>
           </Button>
         </div>
-
-        {/* Preview Image */}
-        <div className="mt-20 max-w-3xl mx-auto relative">
-          <div className="bg-card/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden p-5 border border-border relative group">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-            <div className="aspect-[4/3] relative">
-              <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-1.5">
-                {Array.from({ length: 9 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className={`bg-muted/80 rounded-md ${
-                      i === 8 ? "opacity-0" : ""
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-          <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-primary/20 rounded-full blur-2xl"></div>
-          <div className="absolute -top-6 -left-6 w-32 h-32 bg-accent/20 rounded-full blur-2xl"></div>
-        </div>
       </main>
 
       {/* Puzzle Types Section */}
       <section
         id="puzzle-types"
-        className="py-20 px-4 sm:px-6 lg:px-8 bg-muted dark:bg-muted border-t border-border"
+        className="py-20 px-4 sm:px-6 lg:px-8 bg-[#151c2e] border-t border-border"
       >
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
@@ -358,7 +325,7 @@ export default function Home() {
       {/* Features Section */}
       <section
         id="features"
-        className="py-20 px-4 sm:px-6 lg:px-8 bg-background dark:bg-background border-t border-border"
+        className="py-20 px-4 sm:px-6 lg:px-8 bg-[#132136] border-t border-border"
       >
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
@@ -459,7 +426,7 @@ export default function Home() {
       {/* How to Play Section */}
       <section
         id="how-to-play"
-        className="py-20 px-4 sm:px-6 lg:px-8 bg-muted dark:bg-muted border-t border-border"
+        className="py-20 px-4 sm:px-6 lg:px-8 bg-[#1a1f33] border-t border-border"
       >
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
@@ -731,7 +698,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-10 px-4 sm:px-6 lg:px-8 bg-background dark:bg-background border-t border-border text-center">
+      <footer className="py-10 px-4 sm:px-6 lg:px-8 bg-background border-t border-border text-center">
         <p className="text-sm text-foreground/60">
           © {new Date().getFullYear()} PicPuzzle. All rights reserved.
         </p>
