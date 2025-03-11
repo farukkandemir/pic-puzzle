@@ -47,7 +47,7 @@ export default function Home() {
       </header>
 
       {/* Main/Hero Section */}
-      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center relative overflow-hidden bg-gradient-to-b from-background via-primary/5 to-background">
+      <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center relative overflow-hidden bg-background">
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground mb-6">
           Turn Images into <span className="text-primary">Fun Puzzles</span>
         </h1>
@@ -78,7 +78,7 @@ export default function Home() {
       {/* Puzzle Types Section */}
       <section
         id="puzzle-types"
-        className="py-20 px-4 sm:px-6 lg:px-8 bg-[#151c2e] border-t border-border"
+        className="py-20 px-4 sm:px-6 lg:px-8 bg-card border-t border-border"
       >
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
@@ -86,16 +86,16 @@ export default function Home() {
           </h2>
 
           <Tabs defaultValue="sliding" className="w-full max-w-4xl mx-auto">
-            <TabsList className="grid w-full grid-cols-2 mb-10 bg-card/50 dark:bg-card/50 p-1 rounded-lg">
+            <TabsList className="grid w-full grid-cols-2 mb-10 bg-background/20 backdrop-blur-sm rounded-lg">
               <TabsTrigger
                 value="sliding"
-                className="rounded-md data-[state=active]:bg-background dark:data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all duration-200"
+                className="px-4 py-2.5 rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-200"
               >
                 Sliding Puzzle
               </TabsTrigger>
               <TabsTrigger
                 value="jigsaw"
-                className="rounded-md data-[state=active]:bg-background dark:data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all duration-200"
+                className="px-4 py-2.5 rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-200"
               >
                 Jigsaw Puzzle
               </TabsTrigger>
@@ -325,7 +325,7 @@ export default function Home() {
       {/* Features Section */}
       <section
         id="features"
-        className="py-20 px-4 sm:px-6 lg:px-8 bg-[#132136] border-t border-border"
+        className="py-20 px-4 sm:px-6 lg:px-8 bg-background border-t border-border"
       >
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
@@ -426,7 +426,7 @@ export default function Home() {
       {/* How to Play Section */}
       <section
         id="how-to-play"
-        className="py-20 px-4 sm:px-6 lg:px-8 bg-[#1a1f33] border-t border-border"
+        className="py-20 px-4 sm:px-6 lg:px-8 bg-card border-t border-border"
       >
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-12 text-foreground">
@@ -437,16 +437,16 @@ export default function Home() {
             defaultValue="sliding-how-to"
             className="w-full max-w-4xl mx-auto"
           >
-            <TabsList className="grid w-full grid-cols-2 mb-10 bg-card/50 dark:bg-card/50 p-1 rounded-lg">
+            <TabsList className="grid w-full grid-cols-2 mb-10 bg-background/20 backdrop-blur-sm rounded-lg">
               <TabsTrigger
                 value="sliding-how-to"
-                className="rounded-md data-[state=active]:bg-background dark:data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all duration-200"
+                className="px-4 py-2.5 rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-200"
               >
                 Sliding Puzzle
               </TabsTrigger>
               <TabsTrigger
                 value="jigsaw-how-to"
-                className="rounded-md data-[state=active]:bg-background dark:data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all duration-200"
+                className="px-4 py-2.5 rounded-md data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-200"
               >
                 Jigsaw Puzzle
               </TabsTrigger>

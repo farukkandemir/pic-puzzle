@@ -48,15 +48,15 @@
 :root {
   /* Dark Theme Colors As Default */
   /* Base colors - Deep Rich Navy */
-  --background: #121826;
+  --background: #0f172a;
   --foreground: #f8fafc;
 
   /* Card colors - Slightly lighter navy */
-  --card: #1e293b;
+  --card: #141e33;
   --card-foreground: #f8fafc;
 
   /* Popover colors */
-  --popover: #1e293b;
+  --popover: #141e33;
   --popover-foreground: #f8fafc;
 
   /* Primary colors - Vibrant Cyan */
@@ -111,11 +111,11 @@
   --foreground: #f8fafc;
 
   /* Card colors */
-  --card: #1e293b;
+  --card: #141e33;
   --card-foreground: #f8fafc;
 
   /* Popover colors */
-  --popover: #1e293b;
+  --popover: #141e33;
   --popover-foreground: #f8fafc;
 
   /* Primary colors - Bright Electric Blue */
@@ -127,7 +127,7 @@
   --secondary-foreground: #ffffff;
 
   /* Muted colors */
-  --muted: #334155;
+  --muted: #1e293b;
   --muted-foreground: #94a3b8;
 
   /* Accent colors - Mint Green */
@@ -151,7 +151,7 @@
   --chart-5: #fb7185; /* Bright Rose */
 
   /* Sidebar */
-  --sidebar: #1e293b;
+  --sidebar: #0f172a;
   --sidebar-foreground: #f8fafc;
   --sidebar-primary: #0ea5e9;
   --sidebar-primary-foreground: #ffffff;
