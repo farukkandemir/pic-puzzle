@@ -219,12 +219,8 @@ const HeroSection = () => {
 
           {/* Right column: Interactive puzzle */}
           <div className="relative group">
-            {/* Enhanced background effects */}
-            <div className="absolute -inset-4 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 rounded-2xl blur-xl opacity-70"></div>
-            <div className="absolute inset-0 bg-gradient-to-tr from-accent/5 via-transparent to-primary/5 rounded-xl"></div>
-
-            {/* Main puzzle container with improved styling */}
-            <div className="relative bg-card/40 backdrop-blur-sm rounded-xl border border-border/80 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.2)] dark:shadow-[0_10px_40px_-15px_rgba(0,0,0,0.4)] overflow-hidden">
+            {/* Main puzzle container with improved styling - removed backdrop blur */}
+            <div className="relative bg-card/70 rounded-xl border border-border/80 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.2)] dark:shadow-[0_10px_40px_-15px_rgba(0,0,0,0.4)] overflow-hidden">
               {/* Decorative puzzle pattern background */}
               <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
                 <svg
@@ -318,10 +314,6 @@ const HeroSection = () => {
                 </div>
               </div>
             </div>
-
-            {/* Enhanced decorative elements */}
-            <div className="absolute -bottom-8 -right-8 w-16 h-16 bg-primary/10 rounded-full blur-md"></div>
-            <div className="absolute -top-8 -left-8 w-16 h-16 bg-secondary/10 rounded-full blur-md"></div>
 
             {/* Floating puzzle pieces */}
             <div className="absolute top-5 -right-10 w-8 h-8 opacity-40 transform rotate-12">
