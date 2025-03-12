@@ -5,7 +5,6 @@ import { PuzzleGrid, Position, GameStats } from "@/lib/types";
 import { canMoveTile, moveTile, isPuzzleSolved, formatTime } from "@/lib/utils";
 import PuzzleTile from "./PuzzleTile";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 import { Eye, Clock, Move } from "lucide-react";
 import { Button } from "@/components/ui/button";
 

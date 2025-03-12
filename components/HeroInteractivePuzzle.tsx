@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { PuzzleGrid, Position } from "@/lib/types";
+import { PuzzleGrid } from "@/lib/types";
 import {
   createPuzzleGrid,
   shufflePuzzle,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Tile, Position } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -98,7 +98,6 @@ const PuzzleTile = ({
       aria-label={`Puzzle tile ${tile.id}`}
       role="button"
     >
-      {/* Subtle highlight overlay for movable tiles */}
       {isMovable && (
         <div
           className={cn(
@@ -107,11 +106,6 @@ const PuzzleTile = ({
           )}
         />
       )}
-
-      {/* Uncomment to show tile IDs for debugging */}
-      {/* <div className="absolute inset-0 flex items-center justify-center bg-black/30 text-white text-sm font-bold">
-        {tile.id}
-      </div> */}
     </div>
   );
 };

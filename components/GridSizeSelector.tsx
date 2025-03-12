@@ -32,7 +32,7 @@ const GridSizeSelector = ({
             key={size}
             onClick={() => onSizeChange(size)}
             className={cn(
-              "flex flex-col items-center justify-center p-3 rounded-lg border transition-all",
+              "rounded-lg border transition-all",
               "hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20",
               selectedSize === size
                 ? "border-primary bg-primary/10"
@@ -41,7 +41,7 @@ const GridSizeSelector = ({
             aria-label={`${size}x${size} grid`}
           >
             {/* Visual representation of the grid */}
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center justify-center p-3">
               <div
                 className="grid gap-0.5 mb-2"
                 style={{
@@ -50,14 +50,7 @@ const GridSizeSelector = ({
                 }}
               >
                 {Array.from({ length: size * size }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="aspect-square bg-foreground/80"
-                    style={{
-                      width: size === 3 ? "8px" : size === 4 ? "7px" : "6px",
-                      height: size === 3 ? "8px" : size === 4 ? "7px" : "6px",
-                    }}
-                  />
+                  <div key={i} className="aspect-square bg-foreground/80" />
                 ))}
               </div>
               <span className="text-sm font-medium">

@@ -39,7 +39,7 @@ type SetupStep = "image-selection" | "grid-selection";
 const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
+  const [_, setImageLoaded] = useState(false);
   const [gridSize, setGridSize] = useState<GridSize>(3);
   const [currentStep, setCurrentStep] = useState<SetupStep>("image-selection");
   const fileInputRef = useRef<HTMLInputElement>(null);
