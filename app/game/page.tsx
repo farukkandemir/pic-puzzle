@@ -12,6 +12,7 @@ import { GameState, PuzzleGrid, GameStats } from "@/lib/types";
 import { createPuzzleGrid, shufflePuzzle } from "@/lib/utils";
 import { toast } from "sonner";
 import { GridSize } from "@/components/ImageUploader";
+import LogoAndName from "@/components/LogoAndName";
 
 // Generate a low quality placeholder image
 const generatePlaceholder = (imageUrl: string): Promise<string> => {
@@ -269,17 +270,9 @@ export default function GamePage() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <header className="border-b py-4 px-6 flex items-center justify-between">
+      <header className="w-full py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center backdrop-blur-sm bg-background/80 sticky top-0 z-10 border-b border-border">
         <Link href="/" className="flex items-center gap-2">
-          <div className="relative w-8 h-8 overflow-hidden rounded">
-            <div className="grid grid-cols-2 grid-rows-2 w-full h-full">
-              <div className="bg-primary/70"></div>
-              <div className="bg-primary"></div>
-              <div className="bg-primary-foreground/40"></div>
-              <div className="bg-primary-foreground/90"></div>
-            </div>
-          </div>
-          <h1 className="text-xl font-bold text-primary">PicPuzzle</h1>
+          <LogoAndName />
         </Link>
         <Button variant="ghost" size="sm" asChild>
           <Link href="/">Back to Home</Link>
