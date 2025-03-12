@@ -45,37 +45,312 @@ const Header = () => {
 
 const HeroSection = () => {
   return (
-    <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center relative overflow-hidden bg-background">
-      <div className="max-w-5xl mx-auto flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
-        <div className="w-full lg:w-1/2 flex-shrink-0 order-2 lg:order-1 text-left lg:text-left">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground mb-6">
-            Turn Images into <span className="text-primary">Fun Puzzles</span>
-          </h1>
-          <p className="text-lg sm:text-xl text-foreground/80 mb-8">
-            Upload your favorite photos, transform them into interactive
-            puzzles, and challenge yourself or friends to solve them.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-5">
-            <Button
-              size="lg"
-              className="text-base px-8 py-6 shadow-md bg-primary text-primary-foreground hover:bg-primary/90 "
-              asChild
-            >
-              <Link href="/game">Start Playing</Link>
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="text-base px-8 py-6 border-border hover:bg-muted/50 cursor-pointer"
-              asChild
-            >
-              <a href="#puzzle-types">Explore Puzzle Types</a>
-            </Button>
-          </div>
-        </div>
+    <main className="flex-1 relative px-4 sm:px-6 lg:px-8 py-16 md:py-24 overflow-hidden bg-background">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-10 -right-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-secondary/5 rounded-full blur-3xl"></div>
 
-        <div className="w-full lg:w-1/2 flex-shrink-0 order-1 lg:order-2">
-          <HeroInteractivePuzzle />
+        {/* Grid pattern */}
+        <div
+          className="absolute inset-0 opacity-[0.02]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, currentColor 1px, transparent 1px)",
+            backgroundSize: "30px 30px",
+          }}
+        ></div>
+
+        {/* Puzzle piece outlines */}
+        <div className="hidden md:block absolute top-20 right-10 opacity-10">
+          <svg
+            width="120"
+            height="120"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M4 8H8V4H14V8H18V14H14V18H8V14H4V8Z"
+              stroke="currentColor"
+              strokeWidth="1"
+            />
+          </svg>
+        </div>
+        <div className="hidden md:block absolute bottom-20 left-10 opacity-10">
+          <svg
+            width="80"
+            height="80"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M4 8H8V4H14V8H18V14H14V18H8V14H4V8Z"
+              stroke="currentColor"
+              strokeWidth="1"
+            />
+          </svg>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto">
+        {/* Hero content container */}
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+          {/* Left column: Text content */}
+          <div className="flex flex-col space-y-8">
+            <div className="space-y-6">
+              <div className="inline-flex items-center px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium">
+                <span className="flex h-2 w-2 rounded-full bg-primary mr-2"></span>
+                Turn your photos into puzzles
+              </div>
+
+              <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground">
+                Challenge Your{" "}
+                <span className="text-primary relative">
+                  Mind
+                  <svg
+                    className="absolute -bottom-2 left-0 w-full h-2 text-primary/30"
+                    viewBox="0 0 100 10"
+                    preserveAspectRatio="none"
+                  >
+                    <path
+                      d="M0,5 Q25,0 50,5 T100,5"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                    />
+                  </svg>
+                </span>{" "}
+                with Picture Puzzles
+              </h1>
+
+              <p className="text-lg sm:text-xl text-foreground/80 max-w-xl">
+                Upload your favorite photos, transform them into interactive
+                puzzles, and challenge yourself or friends to solve them.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-5">
+              <Button
+                size="lg"
+                className="text-base px-8 py-6 shadow-lg bg-primary text-primary-foreground hover:bg-primary/90 relative overflow-hidden group"
+                asChild
+              >
+                <Link href="/game">
+                  <span className="relative z-10">Start Playing</span>
+                  <span className="absolute inset-0 bg-white/20 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></span>
+                </Link>
+              </Button>
+
+              <Button
+                variant="outline"
+                size="lg"
+                className="text-base px-8 py-6 border-border hover:bg-muted/50 cursor-pointer relative overflow-hidden group"
+                asChild
+              >
+                <a href="#puzzle-types">
+                  <span className="relative z-10">Explore Puzzle Types</span>
+                  <span className="absolute inset-0 bg-primary/10 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></span>
+                </a>
+              </Button>
+            </div>
+
+            {/* Feature highlights */}
+            <div className="grid grid-cols-2 gap-4 pt-4 mt-4 border-t border-border/50">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-primary"
+                  >
+                    <rect width="18" height="18" x="3" y="3" rx="2" />
+                    <path d="M3 9h18" />
+                    <path d="M9 21V9" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-medium text-foreground">
+                    Multiple Layouts
+                  </h3>
+                  <p className="text-sm text-foreground/70">
+                    3x3, 4x4, and more coming soon
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-secondary-foreground"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-medium text-foreground">
+                    Track Progress
+                  </h3>
+                  <p className="text-sm text-foreground/70">
+                    Monitor moves and time
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right column: Interactive puzzle */}
+          <div className="relative group">
+            {/* Enhanced background effects */}
+            <div className="absolute -inset-4 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 rounded-2xl blur-xl opacity-70"></div>
+            <div className="absolute inset-0 bg-gradient-to-tr from-accent/5 via-transparent to-primary/5 rounded-xl"></div>
+
+            {/* Main puzzle container with improved styling */}
+            <div className="relative bg-card/40 backdrop-blur-sm rounded-xl border border-border/80 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.2)] dark:shadow-[0_10px_40px_-15px_rgba(0,0,0,0.4)] overflow-hidden">
+              {/* Decorative puzzle pattern background */}
+              <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+                <svg
+                  width="100%"
+                  height="100%"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <pattern
+                    id="puzzle-pattern"
+                    x="0"
+                    y="0"
+                    width="40"
+                    height="40"
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <path
+                      d="M10,0 H30 V10 H40 V30 H30 V40 H10 V30 H0 V10 H10 Z"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1"
+                    />
+                  </pattern>
+                  <rect
+                    x="0"
+                    y="0"
+                    width="100%"
+                    height="100%"
+                    fill="url(#puzzle-pattern)"
+                  />
+                </svg>
+              </div>
+
+              {/* Puzzle title banner */}
+              <div className="relative px-6 py-3 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent border-b border-border/50">
+                <h3 className="text-sm font-medium text-foreground/90 flex items-center">
+                  <Puzzle className="w-4 h-4 mr-2 text-primary" />
+                  Interactive Puzzle
+                  <span className="ml-auto text-xs text-foreground/60">
+                    Try it out!
+                  </span>
+                </h3>
+              </div>
+
+              {/* Puzzle content with inner frame */}
+              <div className="p-6">
+                <div className="aspect-square w-full max-w-md mx-auto relative">
+                  {/* Corner accents for inner frame */}
+                  <div className="absolute -top-1 -left-1 w-6 h-6 border-t-2 border-l-2 border-primary/30 rounded-tl-md"></div>
+                  <div className="absolute -top-1 -right-1 w-6 h-6 border-t-2 border-r-2 border-primary/30 rounded-tr-md"></div>
+                  <div className="absolute -bottom-1 -left-1 w-6 h-6 border-b-2 border-l-2 border-primary/30 rounded-bl-md"></div>
+                  <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-2 border-r-2 border-primary/30 rounded-br-md"></div>
+
+                  {/* The interactive puzzle component */}
+                  <HeroInteractivePuzzle />
+                </div>
+              </div>
+
+              {/* Footer with stats and info */}
+              <div className="px-6 py-3 bg-muted/30 border-t border-border/50 flex justify-between items-center text-xs text-foreground/70">
+                <div className="flex items-center gap-3">
+                  <span className="flex items-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-3.5 w-3.5 mr-1"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect
+                        x="2"
+                        y="2"
+                        width="20"
+                        height="20"
+                        rx="5"
+                        ry="5"
+                      ></rect>
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                    </svg>
+                    Upload Your Image
+                  </span>
+                </div>
+                <div className="flex items-center">
+                  <span className="inline-flex items-center gap-1">
+                    <Clock className="h-3.5 w-3.5" />
+                    <span>Track Time</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Enhanced decorative elements */}
+            <div className="absolute -bottom-8 -right-8 w-16 h-16 bg-primary/10 rounded-full blur-md"></div>
+            <div className="absolute -top-8 -left-8 w-16 h-16 bg-secondary/10 rounded-full blur-md"></div>
+
+            {/* Floating puzzle pieces */}
+            <div className="absolute top-5 -right-10 w-8 h-8 opacity-40 transform rotate-12">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6,11 H0 V6 H6 V0 H11 V6 H17 V11 H11 V17 H6 V11 Z"
+                  fill="currentColor"
+                  className="text-primary/40"
+                />
+              </svg>
+            </div>
+            <div className="absolute -bottom-5 -left-10 w-7 h-7 opacity-30 transform -rotate-12">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6,11 H0 V6 H6 V0 H11 V6 H17 V11 H11 V17 H6 V11 Z"
+                  fill="currentColor"
+                  className="text-secondary/40"
+                />
+              </svg>
+            </div>
+          </div>
         </div>
       </div>
     </main>
