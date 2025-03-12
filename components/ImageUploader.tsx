@@ -1,12 +1,21 @@
 "use client";
 
-import { useState, useRef, ChangeEvent, useCallback } from "react";
+import { useState, useRef, ChangeEvent, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import GridSizeSelector from "./GridSizeSelector";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Upload,
+  Image as ImageIcon,
+  ArrowRight,
+  ArrowLeft,
+  Check,
+  X,
+} from "lucide-react";
 
 // Type definition for grid size
 export type GridSize = 3 | 4 | 5 | 6;
@@ -25,11 +34,19 @@ type ImageUploaderProps = {
   onImageSelected: (imageUrl: string, gridSize: GridSize) => void;
 };
 
+// Setup steps
+type SetupStep = "image-selection" | "grid-selection" | "preview";
+
 const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [gridSize, setGridSize] = useState<GridSize>(3);
+  const [currentStep, setCurrentStep] = useState<SetupStep>("image-selection");
+  const [previewGrid, setPreviewGrid] = useState<{
+    rows: number;
+    cols: number;
+  }>({ rows: 3, cols: 3 });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Pre-optimize image before displaying
@@ -52,28 +69,26 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
             height = height * ratio;
           }
 
-          // Create canvas and resize image
+          // Create canvas for resizing
           const canvas = document.createElement("canvas");
           canvas.width = width;
           canvas.height = height;
 
+          // Draw and export as JPEG with quality setting
           const ctx = canvas.getContext("2d");
           if (!ctx) {
-            reject(new Error("Could not get canvas context"));
+            reject(new Error("Failed to get canvas context"));
             return;
           }
 
           ctx.drawImage(img, 0, 0, width, height);
-
-          // Determine quality based on original file size
-          let quality = 0.9;
-          if (file.size > 3 * 1024 * 1024) quality = 0.7;
-          else if (file.size > 1 * 1024 * 1024) quality = 0.8;
-
-          resolve(canvas.toDataURL("image/jpeg", quality));
+          const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+          resolve(dataUrl);
         };
 
-        img.onerror = () => reject(new Error("Failed to load image"));
+        img.onerror = () => {
+          reject(new Error("Failed to load image"));
+        };
 
         if (event.target?.result) {
           img.src = event.target.result as string;
@@ -82,228 +97,437 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
         }
       };
 
-      reader.onerror = () => reject(new Error("Failed to read file"));
+      reader.onerror = () => {
+        reject(new Error("Failed to read file"));
+      };
+
       reader.readAsDataURL(file);
     });
   };
 
-  // Handle drag and drop
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  }, []);
+  // Handle file upload
+  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const file = e.dataTransfer.files[0];
-
-      // Process the dropped file directly
-      handleFile(file);
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File too large", {
+        description: "Please select an image smaller than 5MB.",
+      });
+      return;
     }
-  }, []);
 
-  // Centralized file handling function
-  const handleFile = async (file: File) => {
     // Check file type
     if (!file.type.startsWith("image/")) {
       toast.error("Invalid file type", {
-        description: "Please upload an image file (JPEG, PNG, etc.)",
+        description: "Please select a valid image file.",
       });
       return;
     }
-
-    // Check file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error("File too large", {
-        description: "Please upload an image smaller than 10MB",
-      });
-      return;
-    }
-
-    setIsUploading(true);
-    setImageLoaded(false);
 
     try {
-      // Optimize the image before displaying
+      setIsUploading(true);
       const optimizedImageUrl = await optimizeImage(file);
       setSelectedImage(optimizedImageUrl);
-      toast.success("Image uploaded", {
-        description: "Your image has been uploaded and optimized successfully",
-      });
+      setImageLoaded(true);
+      setIsUploading(false);
+
+      // Automatically move to the next step after image is loaded
+      setCurrentStep("grid-selection");
     } catch (error) {
-      toast.error("Failed to process image", {
-        description: "Please try another image or a different format",
+      console.error("Error uploading image:", error);
+      toast.error("Upload failed", {
+        description: "Failed to process the image. Please try again.",
       });
-    } finally {
       setIsUploading(false);
     }
   };
 
-  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      handleFile(file);
-    }
-  };
-
-  const handleGalleryImageClick = (imageUrl: string) => {
+  // Handle gallery image selection
+  const handleGallerySelect = (imageUrl: string) => {
     setSelectedImage(imageUrl);
     setImageLoaded(true);
-    toast.success("Image selected", {
-      description: "Gallery image selected successfully",
-    });
+
+    // Automatically move to the next step after image is selected
+    setCurrentStep("grid-selection");
   };
 
-  const handleSelectButtonClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
+  // Handle grid size selection
+  const handleGridSizeChange = (size: GridSize) => {
+    setGridSize(size);
+    setPreviewGrid({ rows: size, cols: size });
   };
 
-  const handleCreatePuzzle = () => {
+  // Handle start game
+  const handleStartGame = () => {
     if (selectedImage) {
       onImageSelected(selectedImage, gridSize);
     }
   };
 
-  const handleImageLoad = () => {
-    setImageLoaded(true);
+  // Handle back button
+  const handleBack = () => {
+    if (currentStep === "grid-selection") {
+      setCurrentStep("image-selection");
+    } else if (currentStep === "preview") {
+      setCurrentStep("grid-selection");
+    }
   };
 
-  // Handle grid size change
-  const handleGridSizeChange = (size: GridSize) => {
-    setGridSize(size);
-    toast.info(`Grid size set to ${size}×${size}`, {
-      description:
-        size > 3
-          ? "Larger grids create more challenging puzzles!"
-          : "3×3 grid is good for beginners",
-    });
+  // Handle next button
+  const handleNext = () => {
+    if (currentStep === "image-selection" && selectedImage) {
+      setCurrentStep("grid-selection");
+    } else if (currentStep === "grid-selection") {
+      setCurrentStep("preview");
+    }
+  };
+
+  // Generate preview grid cells
+  const renderPreviewGrid = () => {
+    const cells = [];
+    const size = 240; // Preview size
+    const cellSize = size / previewGrid.cols;
+
+    for (let i = 0; i < previewGrid.rows * previewGrid.cols; i++) {
+      const row = Math.floor(i / previewGrid.cols);
+      const col = i % previewGrid.cols;
+
+      // Skip the last cell (empty space)
+      if (i === previewGrid.rows * previewGrid.cols - 1) {
+        cells.push(
+          <div
+            key={i}
+            className="bg-background/10 rounded-sm"
+            style={{
+              width: cellSize,
+              height: cellSize,
+            }}
+          />
+        );
+        continue;
+      }
+
+      // Calculate background position for this cell
+      const percentPerTile = 100 / (previewGrid.cols - 1);
+      const bgPosX = (i % previewGrid.cols) * percentPerTile;
+      const bgPosY = Math.floor(i / previewGrid.cols) * percentPerTile;
+      const bgSize = previewGrid.cols * 100;
+
+      cells.push(
+        <motion.div
+          key={i}
+          className="border border-border/20 rounded-sm overflow-hidden shadow-sm"
+          style={{
+            width: cellSize,
+            height: cellSize,
+            backgroundImage: selectedImage ? `url(${selectedImage})` : "none",
+            backgroundSize: `${bgSize}%`,
+            backgroundPosition: `${bgPosX}% ${bgPosY}%`,
+          }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: i * 0.01, duration: 0.2 }}
+        />
+      );
+    }
+    return cells;
+  };
+
+  // Render the current step
+  const renderStep = () => {
+    switch (currentStep) {
+      case "image-selection":
+        return (
+          <motion.div
+            key="image-selection"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-6"
+          >
+            <div className="text-center space-y-2">
+              <h2 className="text-2xl font-bold">Choose an Image</h2>
+              <p className="text-muted-foreground">
+                Select an image from our gallery or upload your own
+              </p>
+            </div>
+
+            <Tabs defaultValue="gallery" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="gallery" className="gap-2">
+                  <ImageIcon className="h-4 w-4" />
+                  Gallery
+                </TabsTrigger>
+                <TabsTrigger value="upload" className="gap-2">
+                  <Upload className="h-4 w-4" />
+                  Upload
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="gallery" className="mt-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {GALLERY_IMAGES.map((image, index) => (
+                    <motion.div
+                      key={index}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`relative aspect-square rounded-md overflow-hidden cursor-pointer border-2 transition-all ${
+                        selectedImage === image
+                          ? "border-primary shadow-md"
+                          : "border-transparent hover:border-primary/50"
+                      }`}
+                      onClick={() => handleGallerySelect(image)}
+                    >
+                      <Image
+                        src={image}
+                        alt={`Gallery image ${index + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                      {selectedImage === image && (
+                        <div className="absolute top-2 right-2 bg-primary text-primary-foreground rounded-full p-1">
+                          <Check className="h-4 w-4" />
+                        </div>
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="upload" className="mt-4">
+                <div className="flex flex-col items-center justify-center border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    className="hidden"
+                  />
+
+                  {isUploading ? (
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
+                      <p className="text-sm text-muted-foreground">
+                        Processing image...
+                      </p>
+                    </div>
+                  ) : selectedImage && currentStep === "image-selection" ? (
+                    <div className="space-y-4 w-full">
+                      <div className="relative w-40 h-40 mx-auto rounded-md overflow-hidden">
+                        <Image
+                          src={selectedImage}
+                          alt="Selected image"
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setSelectedImage(null);
+                          setImageLoaded(false);
+                          if (fileInputRef.current) {
+                            fileInputRef.current.value = "";
+                          }
+                        }}
+                        className="gap-2"
+                      >
+                        <X className="h-4 w-4" />
+                        Remove
+                      </Button>
+                    </div>
+                  ) : (
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="flex flex-col items-center justify-center p-4 w-full h-full"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                        <Upload className="h-8 w-8 text-muted-foreground" />
+                      </div>
+                      <p className="font-medium">Click to upload</p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        PNG, JPG or WEBP (max. 5MB)
+                      </p>
+                    </motion.button>
+                  )}
+                </div>
+              </TabsContent>
+            </Tabs>
+
+            {selectedImage && (
+              <div className="flex justify-end">
+                <Button
+                  onClick={handleNext}
+                  className="gap-1.5 h-9 text-sm"
+                  size="sm"
+                >
+                  Choose Grid Size
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
+              </div>
+            )}
+          </motion.div>
+        );
+
+      case "grid-selection":
+        return (
+          <motion.div
+            key="grid-selection"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="space-y-6"
+          >
+            <div className="text-center space-y-2">
+              <h2 className="text-2xl font-bold">Choose Grid Size</h2>
+              <p className="text-muted-foreground">
+                Select the difficulty level for your puzzle
+              </p>
+            </div>
+
+            <div className="flex flex-col md:flex-row gap-6 items-center">
+              <div className="w-full md:w-1/2">
+                <GridSizeSelector
+                  selectedSize={gridSize}
+                  onSizeChange={handleGridSizeChange}
+                />
+              </div>
+
+              <div className="w-full md:w-1/2 flex justify-center">
+                {selectedImage && (
+                  <div className="relative">
+                    <div className="relative w-48 h-48 rounded-md overflow-hidden mb-2">
+                      <Image
+                        src={selectedImage}
+                        alt="Selected image"
+                        fill
+                        className="object-cover"
+                      />
+
+                      {/* Grid overlay */}
+                      <div
+                        className="absolute inset-0 grid gap-[1px] bg-black/20"
+                        style={{
+                          gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
+                          gridTemplateRows: `repeat(${gridSize}, 1fr)`,
+                        }}
+                      >
+                        {Array.from({ length: gridSize * gridSize }).map(
+                          (_, i) => (
+                            <div key={i} className="border border-white/20" />
+                          )
+                        )}
+                      </div>
+                    </div>
+                    <p className="text-center text-sm text-muted-foreground">
+                      {gridSize}×{gridSize} grid ({gridSize * gridSize - 1}{" "}
+                      pieces)
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex justify-between">
+              <Button
+                variant="outline"
+                onClick={handleBack}
+                className="gap-1.5 h-9 text-sm"
+                size="sm"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+                Back
+              </Button>
+
+              <Button
+                onClick={handleNext}
+                className="gap-1.5 h-9 text-sm"
+                size="sm"
+              >
+                Preview Puzzle
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+          </motion.div>
+        );
+
+      case "preview":
+        return (
+          <motion.div
+            key="preview"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="space-y-6"
+          >
+            <div className="text-center space-y-2">
+              <h2 className="text-2xl font-bold">Preview Your Puzzle</h2>
+              <p className="text-muted-foreground">
+                Ready to start the game with a {gridSize}×{gridSize} grid?
+              </p>
+            </div>
+
+            <div className="flex justify-center">
+              <div className="relative">
+                <div
+                  className="grid gap-[2px] bg-muted rounded-lg overflow-hidden shadow-md"
+                  style={{
+                    gridTemplateColumns: `repeat(${previewGrid.cols}, 1fr)`,
+                    width: "240px",
+                    height: "240px",
+                  }}
+                >
+                  {renderPreviewGrid()}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row justify-between gap-3">
+              <div className="flex gap-2 flex-1">
+                <Button
+                  variant="outline"
+                  onClick={handleBack}
+                  className="gap-1.5 flex-1 h-9 text-sm"
+                  size="sm"
+                >
+                  <ArrowLeft className="h-3.5 w-3.5" />
+                  Back
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={() => setCurrentStep("image-selection")}
+                  className="flex-1 h-9 text-sm"
+                  size="sm"
+                >
+                  Change Image
+                </Button>
+              </div>
+
+              <Button
+                onClick={handleStartGame}
+                className="gap-1.5 flex-1 h-9"
+                size="default"
+              >
+                Start Game
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+          </motion.div>
+        );
+    }
   };
 
   return (
-    <div className="space-y-8">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold mb-2">Create Your Puzzle</h2>
-        <p className="text-gray-600 dark:text-gray-300">
-          Upload an image or choose from our gallery to start playing
-        </p>
-      </div>
-
-      <Tabs defaultValue="upload" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="upload">Upload Image</TabsTrigger>
-          <TabsTrigger value="gallery">Choose from Gallery</TabsTrigger>
-        </TabsList>
-        <TabsContent value="upload" className="py-6">
-          <div
-            className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-12 text-center cursor-pointer hover:border-primary/50 transition-colors"
-            onClick={handleSelectButtonClick}
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
-          >
-            <input
-              type="file"
-              ref={fileInputRef}
-              className="hidden"
-              accept="image/*"
-              onChange={handleFileChange}
-              aria-label="Upload image"
-            />
-
-            {selectedImage ? (
-              <div className="space-y-4">
-                <div className="relative w-64 h-64 mx-auto overflow-hidden rounded-md">
-                  {!imageLoaded && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
-                      <div className="w-full h-full animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md" />
-                    </div>
-                  )}
-                  <Image
-                    src={selectedImage}
-                    alt="Selected image"
-                    fill
-                    className={`object-cover transition-opacity duration-300 ${
-                      imageLoaded ? "opacity-100" : "opacity-0"
-                    }`}
-                    onLoad={handleImageLoad}
-                  />
-                </div>
-                <p className="text-sm text-gray-500">Click to change image</p>
-              </div>
-            ) : (
-              <>
-                <div className="w-16 h-16 mx-auto mb-4 text-gray-400">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                    />
-                  </svg>
-                </div>
-                <p className="text-gray-500 dark:text-gray-400 mb-4">
-                  Drag and drop your image here, or click to browse
-                </p>
-                <Button>Select Image</Button>
-              </>
-            )}
-          </div>
-        </TabsContent>
-        <TabsContent value="gallery" className="py-6">
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {GALLERY_IMAGES.map((image, index) => (
-              <div
-                key={index}
-                className={`aspect-square rounded-md cursor-pointer hover:opacity-90 transition-opacity overflow-hidden relative ${
-                  selectedImage === image
-                    ? "ring-2 ring-primary ring-offset-2"
-                    : ""
-                }`}
-                onClick={() => handleGalleryImageClick(image)}
-              >
-                <Image
-                  src={image}
-                  alt={`Sample image ${index + 1}`}
-                  fill
-                  className="object-cover"
-                  priority={index < 3} // Prioritize loading the first 3 images
-                />
-              </div>
-            ))}
-          </div>
-        </TabsContent>
-      </Tabs>
-
-      {/* Grid Size Selector */}
-      {selectedImage && (
-        <div className="mt-8 bg-card rounded-lg p-6 border border-border">
-          <GridSizeSelector
-            selectedSize={gridSize}
-            onSizeChange={handleGridSizeChange}
-          />
-        </div>
-      )}
-
-      <div className="flex justify-center mt-8">
-        <Button
-          onClick={handleCreatePuzzle}
-          disabled={!selectedImage || isUploading}
-          size="lg"
-          className="w-full sm:w-auto px-8"
-        >
-          {isUploading ? "Processing..." : "Create Puzzle"}
-        </Button>
-      </div>
+    <div className="w-full">
+      <AnimatePresence mode="wait">{renderStep()}</AnimatePresence>
     </div>
   );
 };

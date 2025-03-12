@@ -6,6 +6,8 @@ import { canMoveTile, moveTile, isPuzzleSolved, formatTime } from "@/lib/utils";
 import PuzzleTile from "./PuzzleTile";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { Eye, Clock, Move } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type PuzzleBoardProps = {
   grid: PuzzleGrid;
@@ -25,6 +27,7 @@ const PuzzleBoard = ({
   const [boardSize, setBoardSize] = useState(300);
   const boardRef = useRef<HTMLDivElement>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
+  const [showHint, setShowHint] = useState(false);
 
   // Calculate tile size based on the grid dimensions and board size
   const gridSize = grid.length;
@@ -81,36 +84,66 @@ const PuzzleBoard = ({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Toggle hint (show original image)
+  const handleToggleHint = () => {
+    setShowHint(!showHint);
+    if (!showHint) {
+      toast.info("Hint activated", {
+        description: "Showing the complete image as a reference",
+        duration: 2000,
+      });
+    }
+  };
+
   return (
-    <div className="flex flex-col items-center gap-6">
-      <div className="flex justify-between items-center w-full px-4">
-        <div className="text-sm font-medium">
-          Moves: <span className="font-bold">{gameStats.moves}</span>
+    <div className="flex flex-col items-center gap-4">
+      <div className="flex justify-between items-center w-full px-2">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 text-sm">
+            <Move className="h-3.5 w-3.5 text-muted-foreground" />
+            <span className="font-medium">Moves:</span>
+            <span className="font-bold">{gameStats.moves}</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-sm">
+            <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+            <span className="font-medium">Time:</span>
+            <span className="font-bold">{formatTime(elapsedTime)}</span>
+          </div>
         </div>
 
-        {/* Image Preview */}
-        <div className="border rounded-md shadow-sm w-16 h-16 overflow-hidden flex-shrink-0">
-          <img
-            src={imageUrl}
-            alt="Puzzle Target"
-            className="object-cover w-full h-full"
-          />
-        </div>
-
-        <div className="text-sm font-medium">
-          Time: <span className="font-bold">{formatTime(elapsedTime)}</span>
-        </div>
+        <Button
+          variant={showHint ? "default" : "outline"}
+          size="sm"
+          onClick={handleToggleHint}
+          className="h-8 px-2.5 text-xs gap-1"
+        >
+          <Eye className="h-3.5 w-3.5" />
+          {showHint ? "Hide Hint" : "Hint"}
+        </Button>
       </div>
 
       <div
         ref={boardRef}
-        className="relative bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden shadow-inner"
+        className="relative bg-muted rounded-lg overflow-hidden shadow-md"
         style={{
           width: boardSize,
           height: boardSize,
           padding: `${gapSize}px`,
         }}
       >
+        {/* Hint overlay */}
+        {showHint && (
+          <div className="absolute inset-0 z-10 bg-background/5 flex items-center justify-center">
+            <div className="w-3/4 h-3/4 rounded-md overflow-hidden shadow-lg border border-border">
+              <img
+                src={imageUrl}
+                alt="Puzzle hint"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        )}
+
         <div
           className="grid w-full h-full"
           style={{
