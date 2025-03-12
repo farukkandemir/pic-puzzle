@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useRef, ChangeEvent, useCallback, useEffect } from "react";
+import { useState, useRef, ChangeEvent } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import GridSizeSelector from "./GridSizeSelector";
 import { motion, AnimatePresence } from "framer-motion";
