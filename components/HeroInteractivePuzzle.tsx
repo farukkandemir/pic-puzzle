@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { PuzzleGrid, GameStats } from "@/lib/types";
+import { PuzzleGrid, Position } from "@/lib/types";
 import {
   createPuzzleGrid,
   shufflePuzzle,
@@ -13,25 +13,16 @@ import {
 import PuzzleTile from "./PuzzleTile";
 import { Button } from "@/components/ui/button";
 
+// Define constants
+const IMAGE_URL = "/images/sample-3.jpg";
+
 const HeroInteractivePuzzle = () => {
   const [grid, setGrid] = useState<PuzzleGrid>([]);
-  const [solvedGrid, setSolvedGrid] = useState<PuzzleGrid>([]);
-  const [imageUrl, setImageUrl] = useState<string>("/images/sample-1.jpg");
   const [boardSize, setBoardSize] = useState(320);
   const [isSolved, setIsSolved] = useState(false);
-  const [isAutoSolving, setIsAutoSolving] = useState(false);
   const [showPlayButton, setShowPlayButton] = useState(false);
-  const [interactionTimestamp, setInteractionTimestamp] = useState(Date.now());
-  const [autoSolveTimeout, setAutoSolveTimeout] =
-    useState<NodeJS.Timeout | null>(null);
-  const [gameStats, setGameStats] = useState<GameStats>({
-    moves: 0,
-    startTime: Date.now(),
-  });
 
   const boardRef = useRef<HTMLDivElement>(null);
-  const inactivityTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const autoSolveIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Calculate tile size based on the grid dimensions and board size
   const gridSize = grid.length || 3;
@@ -44,32 +35,10 @@ const HeroInteractivePuzzle = () => {
   useEffect(() => {
     // Create and shuffle the grid
     const newGrid = createPuzzleGrid(3, 3);
-    setSolvedGrid(JSON.parse(JSON.stringify(newGrid)));
 
     // Shuffle with fewer moves for the hero section (easier to solve)
     const shuffledGrid = shufflePuzzle(newGrid, 20);
     setGrid(shuffledGrid);
-
-    // Reset stats
-    setGameStats({
-      moves: 0,
-      startTime: Date.now(),
-    });
-
-    // Set up inactivity tracker
-    resetInactivityTimer();
-
-    return () => {
-      if (inactivityTimeoutRef.current) {
-        clearTimeout(inactivityTimeoutRef.current);
-      }
-      if (autoSolveIntervalRef.current) {
-        clearInterval(autoSolveIntervalRef.current);
-      }
-      if (autoSolveTimeout) {
-        clearTimeout(autoSolveTimeout);
-      }
-    };
   }, []);
 
   // Adjust board size based on window size
@@ -90,7 +59,7 @@ const HeroInteractivePuzzle = () => {
 
   // Handle tile clicks
   const handleTileClick = (rowIndex: number, colIndex: number) => {
-    if (isAutoSolving || isSolved) return;
+    if (isSolved) return;
 
     const position = { row: rowIndex, col: colIndex };
 
@@ -103,133 +72,16 @@ const HeroInteractivePuzzle = () => {
     const newGrid = moveTile(grid, position);
     setGrid(newGrid);
 
-    // Update stats
-    setGameStats((prev) => ({
-      ...prev,
-      moves: prev.moves + 1,
-    }));
-
-    // Record user interaction
-    setInteractionTimestamp(Date.now());
-    resetInactivityTimer();
-
     // Check if solved
     if (isPuzzleSolved(newGrid)) {
       handlePuzzleSolved();
     }
   };
 
-  // Reset inactivity timer
-  const resetInactivityTimer = () => {
-    if (inactivityTimeoutRef.current) {
-      clearTimeout(inactivityTimeoutRef.current);
-    }
-
-    // Auto-solve after 30 seconds of inactivity if not already solved
-    inactivityTimeoutRef.current = setTimeout(() => {
-      if (!isSolved && !isAutoSolving) {
-        startAutoSolve();
-      }
-    }, 30000); // Increased to 30 seconds
-  };
-
   // Handle puzzle solved
   const handlePuzzleSolved = () => {
     setIsSolved(true);
     setShowPlayButton(true);
-
-    // Clean up timers
-    if (inactivityTimeoutRef.current) {
-      clearTimeout(inactivityTimeoutRef.current);
-    }
-    if (autoSolveIntervalRef.current) {
-      clearInterval(autoSolveIntervalRef.current);
-    }
-
-    // Add a delay before showing the "Start Playing" button
-    setAutoSolveTimeout(
-      setTimeout(() => {
-        setShowPlayButton(true);
-      }, 1000)
-    );
-  };
-
-  // Start auto-solving the puzzle
-  const startAutoSolve = () => {
-    if (isAutoSolving || isSolved) return;
-
-    setIsAutoSolving(true);
-
-    // Slower auto-solve for a more deliberate effect
-    const solveInterval = 800; // 800ms between moves - much slower
-
-    let moveCount = 0;
-    autoSolveIntervalRef.current = setInterval(() => {
-      // Only make a limited number of moves for a subtle hint
-      // rather than solving the entire puzzle
-      if (moveCount >= 5) {
-        if (autoSolveIntervalRef.current) {
-          clearInterval(autoSolveIntervalRef.current);
-        }
-        setIsAutoSolving(false);
-        return;
-      }
-
-      setGrid((prevGrid) => {
-        // If already solved, stop auto-solving
-        if (isPuzzleSolved(prevGrid)) {
-          if (autoSolveIntervalRef.current) {
-            clearInterval(autoSolveIntervalRef.current);
-          }
-          setIsAutoSolving(false);
-          handlePuzzleSolved();
-          return prevGrid;
-        }
-
-        // Find a tile that can be moved
-        const validMoves: { row: number; col: number }[] = [];
-
-        for (let row = 0; row < prevGrid.length; row++) {
-          for (let col = 0; col < prevGrid[row].length; col++) {
-            if (canMoveTile(prevGrid, { row, col })) {
-              validMoves.push({ row, col });
-            }
-          }
-        }
-
-        if (validMoves.length > 0) {
-          // Instead of random moves, we could implement a smarter solution
-          // that moves toward the solution, but for this demo we'll still
-          // use a simplified approach
-          const randomMove =
-            validMoves[Math.floor(Math.random() * validMoves.length)];
-          moveCount++;
-          return moveTile(prevGrid, randomMove);
-        }
-
-        return prevGrid;
-      });
-    }, solveInterval);
-  };
-
-  // Reset the puzzle
-  const handleReset = () => {
-    const newGrid = createPuzzleGrid(3, 3);
-    const shuffledGrid = shufflePuzzle(newGrid, 20);
-
-    setGrid(shuffledGrid);
-    setIsSolved(false);
-    setShowPlayButton(false);
-    setIsAutoSolving(false);
-
-    // Reset stats
-    setGameStats({
-      moves: 0,
-      startTime: Date.now(),
-    });
-
-    // Reset timers
-    resetInactivityTimer();
   };
 
   return (
@@ -260,7 +112,7 @@ const HeroInteractivePuzzle = () => {
           }`}
         >
           <img
-            src={imageUrl}
+            src={IMAGE_URL}
             alt="Completed puzzle"
             className="w-full h-full object-cover"
           />
@@ -292,7 +144,7 @@ const HeroInteractivePuzzle = () => {
                   <PuzzleTile
                     key={tile.id}
                     tile={tile}
-                    imageUrl={imageUrl}
+                    imageUrl={IMAGE_URL}
                     tileSize={tileSize}
                     gridSize={gridSize}
                     isMovable={isMovable}
@@ -311,23 +163,13 @@ const HeroInteractivePuzzle = () => {
             showPlayButton ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
         >
-          <div className="flex flex-col items-center gap-4">
+          <div className="flex items-center">
             <Button
               className="bg-white text-black hover:bg-white/90 shadow-lg"
               size="lg"
               asChild
             >
               <Link href="/game">Play Now</Link>
-            </Button>
-            <Button
-              variant="outline"
-              className="border-white text-white hover:bg-white/20 hover:text-white"
-              onClick={(e) => {
-                e.preventDefault();
-                handleReset();
-              }}
-            >
-              Try Again
             </Button>
           </div>
         </div>
