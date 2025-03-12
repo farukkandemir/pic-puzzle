@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import HeroInteractivePuzzle from "@/components/HeroInteractivePuzzle";
 
 export default function Home() {
   return (
@@ -48,30 +49,38 @@ export default function Home() {
 
       {/* Main/Hero Section */}
       <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center relative overflow-hidden bg-background">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground mb-6">
-          Turn Images into <span className="text-primary">Fun Puzzles</span>
-        </h1>
-        <p className="max-w-2xl mx-auto text-lg sm:text-xl text-foreground/80 mb-12">
-          Upload your favorite photos, transform them into interactive puzzles,
-          and challenge yourself or friends to solve them.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-5 justify-center">
-          <Link href="/game">
-            <Button
-              size="lg"
-              className="text-base px-8 py-6 shadow-md hover:shadow-lg transition-all duration-200 bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-[1.03] active:scale-[0.97]"
-            >
-              Start Playing
-            </Button>
-          </Link>
-          <Button
-            variant="outline"
-            size="lg"
-            className="text-base px-8 py-6 border-border hover:bg-muted/50 transition-all duration-200 hover:scale-[1.03] active:scale-[0.97]"
-            asChild
-          >
-            <a href="#puzzle-types">Explore Puzzle Types</a>
-          </Button>
+        <div className="max-w-5xl mx-auto flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
+          <div className="w-full lg:w-1/2 flex-shrink-0 order-2 lg:order-1 text-left lg:text-left">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground mb-6">
+              Turn Images into <span className="text-primary">Fun Puzzles</span>
+            </h1>
+            <p className="text-lg sm:text-xl text-foreground/80 mb-8">
+              Upload your favorite photos, transform them into interactive
+              puzzles, and challenge yourself or friends to solve them.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-5">
+              <Link href="/game">
+                <Button
+                  size="lg"
+                  className="text-base px-8 py-6 shadow-md bg-primary text-primary-foreground hover:bg-primary/90"
+                >
+                  Start Playing
+                </Button>
+              </Link>
+              <Button
+                variant="outline"
+                size="lg"
+                className="text-base px-8 py-6 border-border hover:bg-muted/50"
+                asChild
+              >
+                <a href="#puzzle-types">Explore Puzzle Types</a>
+              </Button>
+            </div>
+          </div>
+
+          <div className="w-full lg:w-1/2 flex-shrink-0 order-1 lg:order-2">
+            <HeroInteractivePuzzle />
+          </div>
         </div>
       </main>
 

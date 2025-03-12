@@ -28,7 +28,7 @@ const PuzzleTile = ({
   if (tile.id === 0) {
     return (
       <div
-        className="relative rounded-md"
+        className="relative rounded-md bg-background/10"
         style={{ width: tileSize, height: tileSize }}
       />
     );
@@ -62,12 +62,14 @@ const PuzzleTile = ({
   return (
     <div
       className={cn(
-        "relative rounded-md overflow-hidden transition-all duration-200 transform cursor-pointer",
+        "relative rounded-md overflow-hidden transition-all duration-300 transform cursor-pointer border border-border/20",
         {
-          "hover:brightness-110": isMovable,
-          "scale-95": isPressed,
-          "opacity-80": isHovered && isMovable,
+          "hover:brightness-110 hover:scale-[1.02] shadow-sm": isMovable,
+          "hover:border-primary/30": isMovable,
+          "scale-[0.97]": isPressed,
+          "brightness-105": isHovered && isMovable,
           "cursor-not-allowed": !isMovable,
+          "shadow-md": isMovable,
         }
       )}
       style={{
@@ -90,6 +92,16 @@ const PuzzleTile = ({
       aria-label={`Puzzle tile ${tile.id}`}
       role="button"
     >
+      {/* Subtle highlight overlay for movable tiles */}
+      {isMovable && (
+        <div
+          className={cn(
+            "absolute inset-0 bg-primary/0 transition-all duration-300",
+            { "bg-primary/5": isHovered }
+          )}
+        />
+      )}
+
       {/* For debugging - uncomment to show tile IDs */}
       {/* <div className="absolute inset-0 flex items-center justify-center bg-black/30 text-white text-sm font-bold">
         {tile.id}
