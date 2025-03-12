@@ -11,15 +11,25 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { GridSize } from "./ImageUploader";
 
 type WinModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onNewGame: () => void;
+  onPlayAgain?: () => void;
   stats: GameStats;
+  gridSize: GridSize;
 };
 
-const WinModal = ({ isOpen, onClose, onNewGame, stats }: WinModalProps) => {
+const WinModal = ({
+  isOpen,
+  onClose,
+  onNewGame,
+  onPlayAgain,
+  stats,
+  gridSize,
+}: WinModalProps) => {
   // Calculate total time
   const totalTime = stats.endTime
     ? Math.floor((stats.endTime - stats.startTime) / 1000)
@@ -37,22 +47,39 @@ const WinModal = ({ isOpen, onClose, onNewGame, stats }: WinModalProps) => {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid grid-cols-2 gap-4 py-4">
-          <div className="bg-muted p-4 rounded-lg text-center">
+        <div className="grid grid-cols-3 gap-3 py-4">
+          <div className="bg-muted p-3 rounded-lg text-center">
             <div className="text-sm text-muted-foreground">Time</div>
-            <div className="text-2xl font-bold">{formatTime(totalTime)}</div>
+            <div className="text-xl md:text-2xl font-bold">
+              {formatTime(totalTime)}
+            </div>
           </div>
-          <div className="bg-muted p-4 rounded-lg text-center">
+          <div className="bg-muted p-3 rounded-lg text-center">
             <div className="text-sm text-muted-foreground">Moves</div>
-            <div className="text-2xl font-bold">{stats.moves}</div>
+            <div className="text-xl md:text-2xl font-bold">{stats.moves}</div>
+          </div>
+          <div className="bg-muted p-3 rounded-lg text-center">
+            <div className="text-sm text-muted-foreground">Grid</div>
+            <div className="text-xl md:text-2xl font-bold">
+              {gridSize}×{gridSize}
+            </div>
           </div>
         </div>
 
         <DialogFooter className="flex flex-col sm:flex-row gap-2">
-          <Button variant="outline" onClick={onClose} className="sm:w-full">
+          <Button variant="outline" onClick={onClose} className="sm:flex-1">
             Close
           </Button>
-          <Button onClick={onNewGame} className="sm:w-full">
+          {onPlayAgain && (
+            <Button
+              variant="secondary"
+              onClick={onPlayAgain}
+              className="sm:flex-1"
+            >
+              Play Again
+            </Button>
+          )}
+          <Button onClick={onNewGame} className="sm:flex-1">
             New Puzzle
           </Button>
         </DialogFooter>

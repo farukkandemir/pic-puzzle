@@ -34,18 +34,24 @@ const PuzzleTile = ({
     );
   }
 
-  // Calculate tile position based on its ID
+  // Calculate tile position based on its ID and grid size
   // This ensures each tile shows the correct part of the image
   const correctRow = Math.floor((tile.id - 1) / gridSize);
   const correctCol = (tile.id - 1) % gridSize;
 
   // For a perfectly square cropped image:
   // - Each tile should display exactly 1/gridSize of the image width and height
-  // - We use 100% * gridSize as the background size (300% for a 3x3 grid)
+  // - We use 100% * gridSize as the background size (300% for a 3x3 grid, 400% for 4x4, etc.)
   // - We position the background image to show the correct portion for this tile
-  const bgSize = gridSize * 100; // e.g., 300% for a 3x3 grid
-  const bgPosX = -(correctCol * 100);
-  const bgPosY = -(correctRow * 100);
+  const bgSize = gridSize * 100; // e.g., 300% for a 3x3 grid, 400% for a 4x4 grid
+
+  // Calculate the percentage position for the background
+  // For a 3x3 grid: 0%, 50%, 100%
+  // For a 4x4 grid: 0%, 33.33%, 66.66%, 100%
+  // And so on for other grid sizes
+  const percentPerTile = 100 / (gridSize - 1);
+  const bgPosX = correctCol * percentPerTile;
+  const bgPosY = correctRow * percentPerTile;
 
   const handleClick = () => {
     if (isMovable) {
@@ -102,7 +108,7 @@ const PuzzleTile = ({
         />
       )}
 
-      {/* For debugging - uncomment to show tile IDs */}
+      {/* Uncomment to show tile IDs for debugging */}
       {/* <div className="absolute inset-0 flex items-center justify-center bg-black/30 text-white text-sm font-bold">
         {tile.id}
       </div> */}

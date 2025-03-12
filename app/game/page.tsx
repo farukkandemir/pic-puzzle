@@ -11,6 +11,7 @@ import WinModal from "@/components/WinModal";
 import { GameState, PuzzleGrid, GameStats } from "@/lib/types";
 import { createPuzzleGrid, shufflePuzzle } from "@/lib/utils";
 import { toast } from "sonner";
+import { GridSize } from "@/components/ImageUploader";
 
 // Generate a low quality placeholder image
 const generatePlaceholder = (imageUrl: string): Promise<string> => {
@@ -120,6 +121,7 @@ export default function GamePage() {
   const [placeholderImage, setPlaceholderImage] = useState<string | null>(null);
   const [puzzleGrid, setPuzzleGrid] = useState<PuzzleGrid>([]);
   const [originalGrid, setOriginalGrid] = useState<PuzzleGrid>([]);
+  const [gridSize, setGridSize] = useState<GridSize>(3);
   const [gameStats, setGameStats] = useState<GameStats>({
     moves: 0,
     startTime: Date.now(),
@@ -129,10 +131,11 @@ export default function GamePage() {
   const [loadingProgress, setLoadingProgress] = useState(0);
 
   // Create a new puzzle when an image is selected
-  const handleImageSelected = async (imageUrl: string) => {
+  const handleImageSelected = async (imageUrl: string, size: GridSize) => {
     setIsLoading(true);
     setLoadingProgress(0);
     setGameState("loading");
+    setGridSize(size);
 
     try {
       // Generate a low quality placeholder immediately
@@ -147,13 +150,14 @@ export default function GamePage() {
         setLoadingProgress(20 + Math.floor(progress * 0.6)); // 20% to 80%
       });
 
-      // Create a 3x3 grid
-      const grid = createPuzzleGrid(3, 3);
+      // Create a grid with the specified size
+      const grid = createPuzzleGrid(size, size);
       setOriginalGrid(JSON.parse(JSON.stringify(grid)));
       setLoadingProgress(85);
 
-      // Shuffle the grid
-      const shuffledGrid = shufflePuzzle(grid, 50);
+      // Shuffle the grid - more shuffles for larger grids
+      const shuffleCount = size * 20; // Scale shuffle count with grid size
+      const shuffledGrid = shufflePuzzle(grid, shuffleCount);
       setPuzzleGrid(shuffledGrid);
       setLoadingProgress(95);
 
@@ -313,12 +317,16 @@ export default function GamePage() {
       </main>
 
       {/* Win Modal */}
-      <WinModal
-        isOpen={showWinModal}
-        onClose={() => setShowWinModal(false)}
-        onNewGame={handleNewGame}
-        stats={gameStats}
-      />
+      {showWinModal && selectedImage && (
+        <WinModal
+          isOpen={showWinModal}
+          onClose={() => setShowWinModal(false)}
+          stats={gameStats}
+          onNewGame={handleNewGame}
+          onPlayAgain={handleReset}
+          gridSize={gridSize}
+        />
+      )}
     </div>
   );
 }

@@ -6,6 +6,10 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import GridSizeSelector from "./GridSizeSelector";
+
+// Type definition for grid size
+export type GridSize = 3 | 4 | 5 | 6;
 
 // Sample gallery images
 const GALLERY_IMAGES = [
@@ -18,13 +22,14 @@ const GALLERY_IMAGES = [
 ];
 
 type ImageUploaderProps = {
-  onImageSelected: (imageUrl: string) => void;
+  onImageSelected: (imageUrl: string, gridSize: GridSize) => void;
 };
 
 const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [gridSize, setGridSize] = useState<GridSize>(3);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Pre-optimize image before displaying
@@ -160,12 +165,23 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
 
   const handleCreatePuzzle = () => {
     if (selectedImage) {
-      onImageSelected(selectedImage);
+      onImageSelected(selectedImage, gridSize);
     }
   };
 
   const handleImageLoad = () => {
     setImageLoaded(true);
+  };
+
+  // Handle grid size change
+  const handleGridSizeChange = (size: GridSize) => {
+    setGridSize(size);
+    toast.info(`Grid size set to ${size}×${size}`, {
+      description:
+        size > 3
+          ? "Larger grids create more challenging puzzles!"
+          : "3×3 grid is good for beginners",
+    });
   };
 
   return (
@@ -268,21 +284,24 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
         </TabsContent>
       </Tabs>
 
-      <div className="flex justify-center">
+      {/* Grid Size Selector */}
+      {selectedImage && (
+        <div className="mt-8 bg-card rounded-lg p-6 border border-border">
+          <GridSizeSelector
+            selectedSize={gridSize}
+            onSizeChange={handleGridSizeChange}
+          />
+        </div>
+      )}
+
+      <div className="flex justify-center mt-8">
         <Button
-          size="lg"
-          disabled={!selectedImage || isUploading}
-          className="px-8"
           onClick={handleCreatePuzzle}
+          disabled={!selectedImage || isUploading}
+          size="lg"
+          className="w-full sm:w-auto px-8"
         >
-          {isUploading ? (
-            <>
-              <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></span>
-              Processing...
-            </>
-          ) : (
-            "Create Puzzle"
-          )}
+          {isUploading ? "Processing..." : "Create Puzzle"}
         </Button>
       </div>
     </div>
