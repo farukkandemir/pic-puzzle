@@ -39,7 +39,6 @@ type SetupStep = "image-selection" | "grid-selection";
 const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [_, setImageLoaded] = useState(false);
   const [gridSize, setGridSize] = useState<GridSize>(3);
   const [currentStep, setCurrentStep] = useState<SetupStep>("image-selection");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -125,7 +124,6 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
       setIsUploading(true);
       const optimizedImageUrl = await optimizeImage(file);
       setSelectedImage(optimizedImageUrl);
-      setImageLoaded(true);
       setIsUploading(false);
 
       // Automatically move to the next step after image is loaded
@@ -142,7 +140,6 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
   // Handle gallery image selection
   const handleGallerySelect = (imageUrl: string) => {
     setSelectedImage(imageUrl);
-    setImageLoaded(true);
 
     // Automatically move to the next step after image is selected
     setCurrentStep("grid-selection");
@@ -265,7 +262,6 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
                         variant="outline"
                         onClick={() => {
                           setSelectedImage(null);
-                          setImageLoaded(false);
                           if (fileInputRef.current) {
                             fileInputRef.current.value = "";
                           }

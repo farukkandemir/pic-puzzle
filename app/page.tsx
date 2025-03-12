@@ -274,7 +274,7 @@ const JigsawComingSoon = () => (
       </div>
       <div className="text-lg font-medium text-foreground">Coming Soon!</div>
       <p className="text-sm text-foreground/80 mt-2">
-        We're working hard to bring you the jigsaw puzzle experience.
+        We&apos;re working hard to bring you the jigsaw puzzle experience.
       </p>
       <div className="mt-6">
         <Button

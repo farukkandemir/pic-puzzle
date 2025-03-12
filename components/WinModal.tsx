@@ -45,7 +45,7 @@ const WinModal = ({
             Puzzle Solved!
           </DialogTitle>
           <DialogDescription className="text-center pt-2">
-            Congratulations! You've successfully completed the puzzle.
+            Congratulations! You&apos;ve successfully completed the puzzle.
           </DialogDescription>
         </DialogHeader>
 

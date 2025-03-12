@@ -12,6 +12,7 @@ import {
 } from "@/lib/utils";
 import PuzzleTile from "./PuzzleTile";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 // Define constants
 const IMAGE_URL = "/images/sample-3.jpg";
@@ -111,10 +112,15 @@ const HeroInteractivePuzzle = () => {
             isSolved ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
         >
-          <img
+          <Image
             src={IMAGE_URL}
             alt="Completed puzzle"
-            className="w-full h-full object-cover"
+            layout="fill"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+            }}
           />
         </div>
 

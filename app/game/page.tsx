@@ -128,12 +128,10 @@ export default function GamePage() {
     startTime: Date.now(),
   });
   const [showWinModal, setShowWinModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
 
   // Create a new puzzle when an image is selected
   const handleImageSelected = async (imageUrl: string, size: GridSize) => {
-    setIsLoading(true);
     setLoadingProgress(0);
     setGameState("loading");
     setGridSize(size);
@@ -174,15 +172,14 @@ export default function GamePage() {
 
       // Short delay before changing state to ensure smooth transition
       setTimeout(() => {
-        setIsLoading(false);
         setGameState("playing");
       }, 500);
     } catch (error) {
       setSelectedImage(null);
       setPlaceholderImage(null);
-      setIsLoading(false);
       setGameState("setup");
       toast.error("Failed to process image. Please try another image.");
+      console.error(error);
     }
   };
 
