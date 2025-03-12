@@ -6,8 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import HeroInteractivePuzzle from "@/components/HeroInteractivePuzzle";
+import {
+  Upload,
+  Image as ImageIcon,
+  Puzzle,
+  BarChart3,
+  Check,
+  Clock,
+  Info,
+} from "lucide-react";
 
-// Header Component
 const Header = () => {
   return (
     <header className="w-full py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center backdrop-blur-sm bg-background/80 sticky top-0 z-10 border-b border-border">
@@ -48,7 +56,6 @@ const Header = () => {
   );
 };
 
-// Hero Section Component
 const HeroSection = () => {
   return (
     <main className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center relative overflow-hidden bg-background">
@@ -65,7 +72,7 @@ const HeroSection = () => {
             <Link href="/game">
               <Button
                 size="lg"
-                className="text-base px-8 py-6 shadow-md bg-primary text-primary-foreground hover:bg-primary/90"
+                className="text-base px-8 py-6 shadow-md bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer"
               >
                 Start Playing
               </Button>
@@ -73,7 +80,7 @@ const HeroSection = () => {
             <Button
               variant="outline"
               size="lg"
-              className="text-base px-8 py-6 border-border hover:bg-muted/50"
+              className="text-base px-8 py-6 border-border hover:bg-muted/50 cursor-pointer"
               asChild
             >
               <a href="#puzzle-types">Explore Puzzle Types</a>
@@ -89,7 +96,6 @@ const HeroSection = () => {
   );
 };
 
-// Sliding Puzzle Preview Component
 const SlidingPuzzlePreview = () => (
   <div className="bg-card dark:bg-card rounded-xl p-6 aspect-square max-w-xs mx-auto shadow-md border border-border relative overflow-hidden group">
     <div className="absolute -bottom-10 -right-10 w-24 h-24 bg-primary/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -109,7 +115,6 @@ const SlidingPuzzlePreview = () => (
   </div>
 );
 
-// Jigsaw Puzzle Preview Component
 const JigsawPuzzlePreview = () => (
   <div className="bg-card dark:bg-card rounded-xl p-6 aspect-square max-w-xs mx-auto relative overflow-hidden shadow-md border border-border">
     <div className="absolute inset-0 grid grid-cols-3 grid-rows-3">
@@ -149,7 +154,6 @@ const JigsawPuzzlePreview = () => (
   </div>
 );
 
-// Feature List Item Component
 const FeatureListItem = ({
   available,
   text,
@@ -163,34 +167,16 @@ const FeatureListItem = ({
         available ? "bg-primary" : "bg-chart-2"
       } p-1 mt-1`}
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className={`h-3 w-3 ${
-          available ? "text-primary-foreground" : "text-white"
-        }`}
-        viewBox="0 0 20 20"
-        fill="currentColor"
-      >
-        {available ? (
-          <path
-            fillRule="evenodd"
-            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-            clipRule="evenodd"
-          />
-        ) : (
-          <path
-            fillRule="evenodd"
-            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-            clipRule="evenodd"
-          />
-        )}
-      </svg>
+      {available ? (
+        <Check className="h-3 w-3 text-primary-foreground" />
+      ) : (
+        <Clock className="h-3 w-3 text-white" />
+      )}
     </div>
     <span className="text-sm text-foreground/80">{text}</span>
   </li>
 );
 
-// Feature Card Component
 const FeatureCard = ({
   icon,
   title,
@@ -262,18 +248,7 @@ const TipsBox = ({
       .replace("/10", "/20")}`}
   >
     <h4 className="font-semibold mb-3 flex items-center gap-2 text-foreground">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        className={`h-5 w-5 ${iconColorClass}`}
-        viewBox="0 0 20 20"
-        fill="currentColor"
-      >
-        <path
-          fillRule="evenodd"
-          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-          clipRule="evenodd"
-        />
-      </svg>
+      <Info className={`h-5 w-5 ${iconColorClass}`} />
       {title}
     </h4>
     <ul className="list-disc pl-5 space-y-1 text-sm text-foreground/80">
@@ -309,20 +284,7 @@ const JigsawComingSoon = () => (
   <div className="bg-chart-2/5 dark:bg-chart-2/10 p-6 rounded-xl shadow-md border border-chart-2/20 dark:border-chart-2/20 text-center">
     <div className="aspect-square relative flex items-center justify-center">
       <div className="text-chart-2 dark:text-chart-2 mb-4">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-16 w-16 mx-auto"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1.5}
-            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
+        <Clock className="h-16 w-16 mx-auto" />
       </div>
       <div className="text-lg font-medium text-foreground">Coming Soon!</div>
       <p className="text-sm text-foreground/80 mt-2">
@@ -332,7 +294,7 @@ const JigsawComingSoon = () => (
         <Button
           variant="outline"
           disabled
-          className="border-chart-2/20 text-muted-foreground"
+          className="border-chart-2/20 text-muted-foreground cursor-pointer"
         >
           Stay Tuned
         </Button>
@@ -394,7 +356,7 @@ const PuzzleTypesSection = () => {
                   />
                 </ul>
                 <Link href="/game">
-                  <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+                  <Button className="bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer">
                     Play Now
                   </Button>
                 </Link>
@@ -429,7 +391,7 @@ const PuzzleTypesSection = () => {
                 <Button
                   variant="outline"
                   disabled
-                  className="border-border text-muted-foreground"
+                  className="border-border text-muted-foreground cursor-pointer"
                 >
                   Coming Soon
                 </Button>
@@ -455,42 +417,14 @@ const FeaturesSection = () => {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <FeatureCard
-            icon={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-primary"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
-            }
+            icon={<ImageIcon className="h-6 w-6 text-primary" />}
             title="Upload Your Images"
             description="Use your own photos to create custom puzzles that are meaningful to you."
             bgColorClass="bg-primary/10 dark:bg-primary/20"
           />
           <FeatureCard
             icon={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-secondary-foreground dark:text-secondary"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"
-                />
-              </svg>
+              <Puzzle className="h-6 w-6 text-secondary-foreground dark:text-secondary" />
             }
             title="Multiple Puzzle Types"
             description="Choose between sliding puzzles and jigsaw puzzles (coming soon) for different challenges."
@@ -498,20 +432,7 @@ const FeaturesSection = () => {
           />
           <FeatureCard
             icon={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-accent-foreground dark:text-accent"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                />
-              </svg>
+              <BarChart3 className="h-6 w-6 text-accent-foreground dark:text-accent" />
             }
             title="Track Your Progress"
             description="Monitor your moves and completion time to improve your puzzle-solving skills."
