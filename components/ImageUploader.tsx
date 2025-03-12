@@ -35,7 +35,7 @@ type ImageUploaderProps = {
 };
 
 // Setup steps
-type SetupStep = "image-selection" | "grid-selection" | "preview";
+type SetupStep = "image-selection" | "grid-selection";
 
 const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -43,10 +43,6 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [gridSize, setGridSize] = useState<GridSize>(3);
   const [currentStep, setCurrentStep] = useState<SetupStep>("image-selection");
-  const [previewGrid, setPreviewGrid] = useState<{
-    rows: number;
-    cols: number;
-  }>({ rows: 3, cols: 3 });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Pre-optimize image before displaying
@@ -156,7 +152,6 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
   // Handle grid size selection
   const handleGridSizeChange = (size: GridSize) => {
     setGridSize(size);
-    setPreviewGrid({ rows: size, cols: size });
   };
 
   // Handle start game
@@ -170,8 +165,6 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
   const handleBack = () => {
     if (currentStep === "grid-selection") {
       setCurrentStep("image-selection");
-    } else if (currentStep === "preview") {
-      setCurrentStep("grid-selection");
     }
   };
 
@@ -179,60 +172,7 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
   const handleNext = () => {
     if (currentStep === "image-selection" && selectedImage) {
       setCurrentStep("grid-selection");
-    } else if (currentStep === "grid-selection") {
-      setCurrentStep("preview");
     }
-  };
-
-  // Generate preview grid cells
-  const renderPreviewGrid = () => {
-    const cells = [];
-    const size = 240; // Preview size
-    const cellSize = size / previewGrid.cols;
-
-    for (let i = 0; i < previewGrid.rows * previewGrid.cols; i++) {
-      const row = Math.floor(i / previewGrid.cols);
-      const col = i % previewGrid.cols;
-
-      // Skip the last cell (empty space)
-      if (i === previewGrid.rows * previewGrid.cols - 1) {
-        cells.push(
-          <div
-            key={i}
-            className="bg-background/10 rounded-sm"
-            style={{
-              width: cellSize,
-              height: cellSize,
-            }}
-          />
-        );
-        continue;
-      }
-
-      // Calculate background position for this cell
-      const percentPerTile = 100 / (previewGrid.cols - 1);
-      const bgPosX = (i % previewGrid.cols) * percentPerTile;
-      const bgPosY = Math.floor(i / previewGrid.cols) * percentPerTile;
-      const bgSize = previewGrid.cols * 100;
-
-      cells.push(
-        <motion.div
-          key={i}
-          className="border border-border/20 rounded-sm overflow-hidden shadow-sm"
-          style={{
-            width: cellSize,
-            height: cellSize,
-            backgroundImage: selectedImage ? `url(${selectedImage})` : "none",
-            backgroundSize: `${bgSize}%`,
-            backgroundPosition: `${bgPosX}% ${bgPosY}%`,
-          }}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: i * 0.01, duration: 0.2 }}
-        />
-      );
-    }
-    return cells;
   };
 
   // Render the current step
@@ -242,10 +182,10 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
         return (
           <motion.div
             key="image-selection"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
             className="space-y-6"
           >
             <div className="text-center space-y-2">
@@ -270,10 +210,8 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
               <TabsContent value="gallery" className="mt-4">
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {GALLERY_IMAGES.map((image, index) => (
-                    <motion.div
+                    <div
                       key={index}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
                       className={`relative aspect-square rounded-md overflow-hidden cursor-pointer border-2 transition-all ${
                         selectedImage === image
                           ? "border-primary shadow-md"
@@ -292,7 +230,7 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
                           <Check className="h-4 w-4" />
                         </div>
                       )}
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               </TabsContent>
@@ -340,10 +278,8 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
                       </Button>
                     </div>
                   ) : (
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="flex flex-col items-center justify-center p-4 w-full h-full"
+                    <button
+                      className="flex flex-col items-center justify-center p-4 w-full h-full hover:opacity-80 transition-opacity"
                       onClick={() => fileInputRef.current?.click()}
                     >
                       <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
@@ -353,7 +289,7 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
                       <p className="text-sm text-muted-foreground mt-1">
                         PNG, JPG or WEBP (max. 5MB)
                       </p>
-                    </motion.button>
+                    </button>
                   )}
                 </div>
               </TabsContent>
@@ -434,61 +370,6 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
               </div>
             </div>
 
-            <div className="flex justify-between">
-              <Button
-                variant="outline"
-                onClick={handleBack}
-                className="gap-1.5 h-9 text-sm"
-                size="sm"
-              >
-                <ArrowLeft className="h-3.5 w-3.5" />
-                Back
-              </Button>
-
-              <Button
-                onClick={handleNext}
-                className="gap-1.5 h-9 text-sm"
-                size="sm"
-              >
-                Preview Puzzle
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Button>
-            </div>
-          </motion.div>
-        );
-
-      case "preview":
-        return (
-          <motion.div
-            key="preview"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="space-y-6"
-          >
-            <div className="text-center space-y-2">
-              <h2 className="text-2xl font-bold">Preview Your Puzzle</h2>
-              <p className="text-muted-foreground">
-                Ready to start the game with a {gridSize}×{gridSize} grid?
-              </p>
-            </div>
-
-            <div className="flex justify-center">
-              <div className="relative">
-                <div
-                  className="grid gap-[2px] bg-muted rounded-lg overflow-hidden shadow-md"
-                  style={{
-                    gridTemplateColumns: `repeat(${previewGrid.cols}, 1fr)`,
-                    width: "240px",
-                    height: "240px",
-                  }}
-                >
-                  {renderPreviewGrid()}
-                </div>
-              </div>
-            </div>
-
             <div className="flex flex-col sm:flex-row justify-between gap-3">
               <div className="flex gap-2 flex-1">
                 <Button
@@ -503,7 +384,10 @@ const ImageUploader = ({ onImageSelected }: ImageUploaderProps) => {
 
                 <Button
                   variant="outline"
-                  onClick={() => setCurrentStep("image-selection")}
+                  onClick={() => {
+                    setSelectedImage(null);
+                    setCurrentStep("image-selection");
+                  }}
                   className="flex-1 h-9 text-sm"
                   size="sm"
                 >
