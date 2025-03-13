@@ -12,6 +12,9 @@ import {
   Check,
   Clock,
   Info,
+  Grid3X3,
+  Timer,
+  Instagram,
 } from "lucide-react";
 import LogoAndName from "@/components/LogoAndName";
 
@@ -48,20 +51,6 @@ const HeroSection = () => {
     <main className="flex-1 relative px-4 sm:px-6 lg:px-8 py-16 md:py-24 overflow-hidden bg-background">
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-10 -right-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-secondary/5 rounded-full blur-3xl"></div>
-
-        {/* Grid pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle, currentColor 1px, transparent 1px)",
-            backgroundSize: "30px 30px",
-          }}
-        ></div>
-
-        {/* Puzzle piece outlines */}
         <div className="hidden md:block absolute top-20 right-10 opacity-10">
           <svg
             width="120"
@@ -160,22 +149,7 @@ const HeroSection = () => {
             <div className="grid grid-cols-2 gap-4 pt-4 mt-4 border-t border-border/50">
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-primary"
-                  >
-                    <rect width="18" height="18" x="3" y="3" rx="2" />
-                    <path d="M3 9h18" />
-                    <path d="M9 21V9" />
-                  </svg>
+                  <Grid3X3 className="h-5 w-5 text-primary" />
                 </div>
                 <div>
                   <h3 className="font-medium text-foreground">
@@ -189,21 +163,7 @@ const HeroSection = () => {
 
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="text-secondary-foreground"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                  </svg>
+                  <Timer className="h-5 w-5 text-secondary-foreground" />
                 </div>
                 <div>
                   <h3 className="font-medium text-foreground">
@@ -274,7 +234,9 @@ const HeroSection = () => {
                   <div className="absolute -bottom-1 -right-1 w-6 h-6 border-b-2 border-r-2 border-primary/30 rounded-br-md"></div>
 
                   {/* The interactive puzzle component */}
-                  <HeroInteractivePuzzle />
+                  <div className="w-full h-full flex items-center justify-center">
+                    <HeroInteractivePuzzle />
+                  </div>
                 </div>
               </div>
 
@@ -282,27 +244,7 @@ const HeroSection = () => {
               <div className="px-6 py-3 bg-muted/30 border-t border-border/50 flex justify-between items-center text-xs text-foreground/70">
                 <div className="flex items-center gap-3">
                   <span className="flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-3.5 w-3.5 mr-1"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <rect
-                        x="2"
-                        y="2"
-                        width="20"
-                        height="20"
-                        rx="5"
-                        ry="5"
-                      ></rect>
-                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                    </svg>
+                    <Instagram className="h-3.5 w-3.5 mr-1" />
                     Upload Your Image
                   </span>
                 </div>
@@ -317,30 +259,10 @@ const HeroSection = () => {
 
             {/* Floating puzzle pieces */}
             <div className="absolute top-5 -right-10 w-8 h-8 opacity-40 transform rotate-12">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M6,11 H0 V6 H6 V0 H11 V6 H17 V11 H11 V17 H6 V11 Z"
-                  fill="currentColor"
-                  className="text-primary/40"
-                />
-              </svg>
+              <Puzzle className="h-8 w-8 text-primary/40" />
             </div>
             <div className="absolute -bottom-5 -left-10 w-7 h-7 opacity-30 transform -rotate-12">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M6,11 H0 V6 H6 V0 H11 V6 H17 V11 H11 V17 H6 V11 Z"
-                  fill="currentColor"
-                  className="text-secondary/40"
-                />
-              </svg>
+              <Puzzle className="h-7 w-7 text-secondary/40" />
             </div>
           </div>
         </div>
