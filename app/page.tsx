@@ -20,7 +20,7 @@ import LogoAndName from "@/components/LogoAndName";
 
 const Header = () => {
   return (
-    <header className="w-full py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center backdrop-blur-sm bg-background/80 sticky top-0 z-10 border-b border-border">
+    <header className="w-full py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center backdrop-blur-sm bg-background/80 sticky top-0 z-50 border-b border-border">
       <LogoAndName />
       <nav className="hidden md:flex gap-8">
         <a
