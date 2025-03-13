@@ -135,7 +135,7 @@ const HeroSection = () => {
               <Button
                 variant="outline"
                 size="lg"
-                className="text-base px-8 py-6 border-border hover:bg-muted/50 cursor-pointer relative overflow-hidden group"
+                className="text-base px-8 py-6 border-border hover:bg-muted/50 hover:text-primary cursor-pointer relative overflow-hidden group"
                 asChild
               >
                 <a href="#puzzle-types">

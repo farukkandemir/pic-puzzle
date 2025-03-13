@@ -123,7 +123,7 @@
   --primary-foreground: #ffffff;
 
   /* Secondary colors - Deep Lavender */
-  --secondary: #a78bfa;
+  --secondary: #34d399;
   --secondary-foreground: #ffffff;
 
   /* Muted colors */
@@ -131,7 +131,7 @@
   --muted-foreground: #94a3b8;
 
   /* Accent colors - Mint Green */
-  --accent: #34d399;
+  --accent: #a78bfa;
   --accent-foreground: #022c22;
 
   /* Destructive colors */
